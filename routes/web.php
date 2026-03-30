@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\CategoryController;
 use App\Controllers\HomeController;
 use App\Controllers\ProductController;
 use App\Controllers\RoleController;
@@ -15,4 +16,5 @@ $router->get('/product/show/{id}', ProductController::class . '@show');
 
 // ------------------------
 
+$router->get('/category', CategoryController::class . '@index');
 $router->run();

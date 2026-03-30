@@ -16,7 +16,7 @@
             <i class="fa-solid fa-box"></i>
             <span>Sản phẩm</span>
         </a>
-        <a href="#" class="nav-item">
+        <a href="{{ route('category') }}" class="nav-item">
             <i class="fa-solid fa-layer-group"></i>
             <span>Danh mục</span>
         </a>
