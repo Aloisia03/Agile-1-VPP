@@ -1,60 +1,72 @@
-@extends('layouts.admin')
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
 
-@section('title', 'Dashboard')
+<style>
+    .wrapper { display: flex; }
+    .main-container { flex: 1; margin-left: 260px; background-color: #f1f5f9; min-height: 100vh; }
+    .product-card { transition: transform 0.2s; border: none; border-radius: 15px; overflow: hidden; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+    .btn-add-cart { border-radius: 50px; font-weight: 600; transition: 0.3s; }
+    .img-container { height: 180px; display: flex; align-items: center; justify-content: center; background: #fff; }
+</style>
 
-@section('content')
-    <h3>Quy chế thi môn Lập trình PHP 2 (WEB3014)</h3>
-    <ul>
-        <li><strong>Thời gian làm bài:</strong> 45 phút.</li>
+<div class="wrapper">
+    <?php include 'views/partials/aside.blade.php'; ?>
 
-        <li>
-            <strong>Tổng điểm:</strong> 10 điểm
-            <ul>
-                <li>6 điểm thực hành.</li>
-                <li>4 điểm vấn đáp lý thuyết sau khi nộp bài.</li>
-            </ul>
-        </li>
+    <div class="main-container">
+        <?php include 'views/partials/header.blade.php'; ?>
 
-        <li>
-            <strong>Quy định phòng thi:</strong>
-            <ul>
-                <li>Không được dùng tài liệu.</li>
-                <li>Không sử dụng kết nối mạng.</li>
-                <li>Không dùng bất kỳ công cụ AI để hỗ trợ làm bài.</li>
-                <li>Không chạy nhiều project hoặc mở source khác trên máy..</li>
-            </ul>
-        </li>
+        <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3 class="fw-bold text-dark"><i class="bi bi-house-door me-2"></i>Cửa hàng Văn phòng phẩm</h3>
+                <a href="/cart" class="btn btn-outline-primary rounded-pill position-relative">
+                    <i class="bi bi-cart3"></i> Giỏ hàng
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        <?= count($_SESSION['cart'] ?? []) ?>
+                    </span>
+                </a>
+            </div>
 
-        <li>
-            <strong>Quy định về gian lận:</strong>
-            <ul>
-                <li>Sử dụng tài liệu hoặc công cụ bị cấm sẽ không chấm bài.</li>
-                <li>Cuối giờ không được dùng <code>Ctrl + Z</code> để khôi phục mã nguồn sẽ không chấm bài.</li>
-            </ul>
-        </li>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                <?php if(!empty($products)): foreach($products as $product): ?>
+                <div class="col">
+                    <div class="card h-100 shadow-sm product-card">
+                        <div class="img-container p-2">
+                            <?php 
+                                $imgName = $product['image_url'] ?? 'default.jpg';
+                                $imgPath = "storage/uploads/" . $imgName;
+                            ?>
+                            <img src="<?= $imgPath ?>" 
+                                 class="rounded-3" 
+                                 style="max-height: 100%; max-width: 100%; object-fit: contain;"
+                                 onerror="this.src='https://via.placeholder.com/200x180?text=No+Image'">
+                        </div>
+                        
+                        <div class="card-body text-center pt-0">
+                            <h6 class="fw-bold text-dark mb-2"><?= $product['name'] ?></h6>
+                            <p class="text-primary fw-bold mb-3"><?= number_format($product['price']) ?>đ</p>
 
-        <li>
-            <strong>Chấm điểm:</strong>
-            <ul>
-                <li>Bài thực hành tối đa 6 điểm.</li>
-                <li>4 điểm còn lại đánh giá qua vấn đáp trực tiếp.</li>
-            </ul>
-        </li>
+                            <form action="cart/add" method="POST">
+                                <input type="hidden" name="id" value="<?= $product['id'] ?>">
+                                <input type="hidden" name="name" value="<?= $product['name'] ?>">
+                                <input type="hidden" name="price" value="<?= $product['price'] ?>">
+                                <input type="hidden" name="image" value="<?= $imgName ?>">
+                                
+                                <button type="submit" class="btn btn-primary w-100 btn-add-cart shadow-sm">
+                                    <i class="bi bi-cart-plus me-2"></i>Thêm vào giỏ
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <?php endforeach; else: ?>
+                <div class="col-12 text-center py-5">
+                    <div class="alert alert-info">Không tìm thấy sản phẩm nào trong hệ thống.</div>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
 
-        <li>
-            <strong>Thông báo quan trọng:</strong>
-            <ul>
-                <li>
-                    Sau khi được chấm điểm, sinh viên bắt buộc truy cập
-                    <a href="https://e360.poly.edu.vn/CheckOut" target="_blank" rel="noopener">
-                        https://e360.poly.edu.vn/CheckOut
-                    </a>
-                    để ký xác nhận (checkout) và hoàn tất việc nhận điểm thi.
-                </li>
-                <li>
-                    Sau khi xác nhận điểm, sinh viên cần xóa toàn bộ project trước khi ra khỏi phòng thi.
-                </li>
-            </ul>
-        </li>
-    </ul>
-@endsection
+        <?php include 'views/partials/footer.blade.php'; ?>
+    </div>
+</div>
