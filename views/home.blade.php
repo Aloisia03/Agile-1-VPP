@@ -1,60 +1,155 @@
-@extends('layouts.admin')
+<!DOCTYPE html>
+<html lang="vi">
 
-@section('title', 'Dashboard')
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Văn Phòng Phẩm</title>
 
-@section('content')
-    <h3>Quy chế thi môn Lập trình PHP 2 (WEB3014)</h3>
-    <ul>
-        <li><strong>Thời gian làm bài:</strong> 45 phút.</li>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        <li>
-            <strong>Tổng điểm:</strong> 10 điểm
-            <ul>
-                <li>6 điểm thực hành.</li>
-                <li>4 điểm vấn đáp lý thuyết sau khi nộp bài.</li>
-            </ul>
-        </li>
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --primary-color: #3498db;
+            --dark-blue: #2c3e50;
+            --light-bg: #f4f7f6;
+        }
 
-        <li>
-            <strong>Quy định phòng thi:</strong>
-            <ul>
-                <li>Không được dùng tài liệu.</li>
-                <li>Không sử dụng kết nối mạng.</li>
-                <li>Không dùng bất kỳ công cụ AI để hỗ trợ làm bài.</li>
-                <li>Không chạy nhiều project hoặc mở source khác trên máy..</li>
-            </ul>
-        </li>
+        body {
+            margin: 0;
+            display: flex;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--light-bg);
+            color: #333;
+        }
 
-        <li>
-            <strong>Quy định về gian lận:</strong>
-            <ul>
-                <li>Sử dụng tài liệu hoặc công cụ bị cấm sẽ không chấm bài.</li>
-                <li>Cuối giờ không được dùng <code>Ctrl + Z</code> để khôi phục mã nguồn sẽ không chấm bài.</li>
-            </ul>
-        </li>
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--dark-blue);
+            color: white;
+            position: fixed;
+        }
 
-        <li>
-            <strong>Chấm điểm:</strong>
-            <ul>
-                <li>Bài thực hành tối đa 6 điểm.</li>
-                <li>4 điểm còn lại đánh giá qua vấn đáp trực tiếp.</li>
-            </ul>
-        </li>
+        .main-container {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-        <li>
-            <strong>Thông báo quan trọng:</strong>
-            <ul>
-                <li>
-                    Sau khi được chấm điểm, sinh viên bắt buộc truy cập
-                    <a href="https://e360.poly.edu.vn/CheckOut" target="_blank" rel="noopener">
-                        https://e360.poly.edu.vn/CheckOut
+        header {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .content {
+            padding: 25px;
+            flex: 1;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            border: none;
+            margin-left: 8px;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-cart {
+            background: #27ae60;
+            color: white;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-badge {
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    @include('partials.sidebar')
+
+    <div class="main-container">
+
+        <header>
+            <div class="breadcrumb">
+                Admin / <strong>@yield('title')</strong>
+            </div>
+
+            <div class="top-actions">
+
+                <!-- 🛒 GIỎ HÀNG -->
+                <?php 
+                    $cartCount = 0;
+                    if (isset($_SESSION['cart'])) {
+                        foreach ($_SESSION['cart'] as $qty) {
+                            $cartCount += $qty;
+                        }
+                    }
+                ?>
+                <a href="/Agile-1-VPP/cart" class="btn btn-cart">
+                    <i class="fa fa-shopping-cart"></i>
+                    Giỏ hàng
+                    <?php if ($cartCount > 0): ?>
+                        <span class="cart-badge"><?= $cartCount ?></span>
+                    <?php endif; ?>
+                </a>
+
+                <!-- 👤 USER -->
+                <?php if (isset($_SESSION['user'])): ?>
+
+                    <i class="fa-regular fa-circle-user"></i>
+                    <?= $_SESSION['user']['name'] ?>
+
+                    <a href="/Agile-1-VPP/login" class="btn btn-danger">
+                        Đăng xuất
                     </a>
-                    để ký xác nhận (checkout) và hoàn tất việc nhận điểm thi.
-                </li>
-                <li>
-                    Sau khi xác nhận điểm, sinh viên cần xóa toàn bộ project trước khi ra khỏi phòng thi.
-                </li>
-            </ul>
-        </li>
-    </ul>
-@endsection
+
+                <?php else: ?>
+
+                    <a href="/Agile-1-VPP/login" class="btn btn-primary">
+                        Đăng nhập
+                    </a>
+
+                <?php endif; ?>
+
+            </div>
+        </header>
+
+        <div class="content">
+            @yield('content')
+        </div>
+
+    </div>
+
+</body>
+</html>
