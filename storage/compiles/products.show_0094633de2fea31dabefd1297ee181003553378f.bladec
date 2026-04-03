@@ -16,7 +16,6 @@
  <th style="padding: 15px;">Danh mục</th>
  <th style="padding: 15px;">Giá bán</th>
  <th style="padding: 15px;">Mô tả</th>
- <th style="padding: 15px; text-align: center;">Thao tác</th>
  </tr>
  </thead>
  <tbody>

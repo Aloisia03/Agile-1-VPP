@@ -13,7 +13,8 @@ $router = new Router();
 $router->get('/', HomeController::class . '@index');
 $router->get('/products', ProductController::class . '@index');
 $router->get('/product/show/{id}', ProductController::class . '@show');
-
+$router->get('/product/create',        ProductController::class . '@create');
+$router->post('/product/store',        ProductController::class . "@store");
 // ------------------------
 
 $router->get('/category', CategoryController::class . '@index');
