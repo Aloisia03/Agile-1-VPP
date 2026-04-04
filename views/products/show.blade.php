@@ -22,7 +22,15 @@
                 {{-- Dữ liệu mẫu - Sau này bạn sẽ dùng @foreach ($products as $product) --}}
                 <tr>
                     <td style="padding: 15px; text-align: center;">
-                        <img src="{{ file_url($product['image']) }}" style="border-radius: 5px; object-fit: cover;"alt="">
+                        @if(isset($product['images']) && is_array($product['images']) && count($product['images']) > 0)
+                            <div class="image-gallery" style="display: flex; flex-wrap: wrap; gap: 10px;">
+                                @foreach($product['images'] as $image)
+                                    <img src="{{ file_url($image) }}" style="border-radius: 5px; object-fit: cover; width: 80px; height: 80px;" alt="">
+                                @endforeach
+                            </div>
+                        @else
+                            <img src="{{ file_url($product['image']) }}" style="border-radius: 5px; object-fit: cover;" alt="">
+                        @endif
                     </td>
                     <td style="padding: 15px;">
                         <strong style="color: #2c3e50;">{{ $product['name'] }}</strong><br>
@@ -40,6 +48,20 @@
                 {{-- Kết thúc mẫu --}}
             </tbody>
         </table>
+    </div>
+
+    <!-- Upload Images Section -->
+    <div class="upload-section" style="margin-top: 30px;">
+        <h3>Upload thêm ảnh sản phẩm</h3>
+        <form method="POST" action="/Agile-1-VPP/product/upload-images/{{ $product['id'] }}" enctype="multipart/form-data" style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <div style="margin-bottom: 15px;">
+                <label for="images" style="display: block; margin-bottom: 5px; font-weight: bold;">Chọn ảnh (có thể chọn nhiều):</label>
+                <input type="file" name="images[]" id="images" multiple accept="image/*" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            </div>
+            <button type="submit" style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+                <i class="fa fa-upload"></i> Upload ảnh
+            </button>
+        </form>
     </div>
 
     <style>

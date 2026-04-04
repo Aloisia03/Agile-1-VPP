@@ -29,7 +29,9 @@ $router->post('/login', AuthController::class . '@login');
 $router->get('/logout', AuthController::class . '@logout');
 
 $router->get('/products', ProductController::class . '@index');
+$router->get('/products/search', ProductController::class . '@search');
 $router->get('/product/show/{id}', ProductController::class . '@show');
+$router->post('/product/upload-images/{id}', ProductController::class . '@uploadImages');
 $router->get('/category', CategoryController::class . '@index');
 
 
