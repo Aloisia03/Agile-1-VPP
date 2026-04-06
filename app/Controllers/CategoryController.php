@@ -1,7 +1,7 @@
 <?php 
 namespace App\Controllers;
 use App\Controller;
-use App\Model\Category;
+use App\Models\Category;
 class CategoryController extends Controller{
     private $modelCategory;
     public function __construct()
@@ -12,5 +12,9 @@ class CategoryController extends Controller{
         $title = "Danh mục sản phẩm";
         $categories = $this->modelCategory->getAll();
         return view('categories.index',compact('title','categories'));
+    }
+    public function show($id){
+        $category = $this->modelCategory->getOne($id);
+        return view('categories.show', compact('category'));
     }
 }

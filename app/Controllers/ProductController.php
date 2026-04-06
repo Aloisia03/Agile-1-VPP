@@ -2,8 +2,8 @@
 namespace App\Controllers;
 
 use App\Controller;
-use App\Model\Category;
-use App\Model\Product;
+use App\Models\Category;
+use App\Models\Product;
 use Exception;
 use Rakit\Validation\Validator;
 
@@ -20,14 +20,32 @@ class ProductController extends Controller
         $this->validator = new Validator();
     }
     public function index(){
-        $categoryId = $_GET['category_id'] ?? null;
-        $products = $this->modelProducts->getAll($categoryId);
+        $currentSort = $_GET['sort'] ?? '';
+        $products = $this->modelProducts->getAll($currentSort);
         $categories = $this->modelCategory->getAll();
-        return view('products.index', compact('products', 'categories'));
+        return view('products.index', compact('products', 'categories', 'currentSort'));
     }
     public function show($id){
         $product = $this->modelProducts->findById($id);
         return view('products.show', compact('product'));
+    }
+    public function listByCategory($id) {
+        $products = $this->modelProducts->findByCategory($id);
+        $categories = $this->modelCategory->getAll();
+        return view('products.listByCategory', compact('products', 'categories'));
+    }
+    public function filterByCategory($id){
+        $category = $this->modelCategory->getOne($id);
+        $title = "Danh mục: " . ($category['name'] ?? 'Không xác định');
+        
+        $products = $this->modelProducts->findByCategory($id);
+        $categories = $this->modelCategory->getAll(); 
+        
+        return view('products.listByCategory', compact('title', 'products', 'categories'));
+    }
+    public function create(){
+        $categories = $this->modelCategory->getAll();
+        return view('products.create', compact('categories'));
     }
     public function store()
     {

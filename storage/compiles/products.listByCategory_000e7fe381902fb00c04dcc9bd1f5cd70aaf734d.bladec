@@ -2,7 +2,7 @@
 
 <?php $this->startSection('content'); ?>
  <div class="page-action" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
- <h2 style="margin: 0;">Chi tiết sản phẩm</h2>
+ <h2 style="margin: 0;">Sản phẩm</h2>
  <a href="#" class="btn btn-success"><i class="fa-solid fa-plus"></i> Thêm sản phẩm mới</a>
  </div>
 

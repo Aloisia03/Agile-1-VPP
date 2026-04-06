@@ -1,8 +1,9 @@
 @extends('home') {{-- Hoặc tên file layout của bạn --}}
 
 @section('content')
-    <form action="/products" method="GET" style="display: flex; gap: 10px;">
-        <select name="category_id" onchange="this.form.submit()">
+    <form action="/products" method="GET"
+        style="padding: 11px 25px; background: #e7e5e5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
+        <select name="category_id" onchange="">
             <option value="">-- Tất cả danh mục --</option>
             @foreach ($categories as $category)
                 <option value="{{ $category['id'] }}"
@@ -11,12 +12,50 @@
                 </option>
             @endforeach
         </select>
-        <button type="submit" class="btn btn-primary" style="padding: 5px 15px;">Tìm kiếm</button>
+
+        {{-- <div class="category-search mb-4" style="margin-bottom: 20px;">
+            <strong>Lọc theo danh mục: </strong>
+            <a href="{{ route('/products') }}" class="btn btn-outline-secondary btn-sm">Tất cả sản phẩm</a>
+
+            @foreach ($categories as $cat)
+                <a href="{{ route('/category/{id}/products', ['id' => $cat['id']]) }}"
+                    class="btn btn-outline-primary btn-sm">
+                    {{ $cat['name'] }}
+                </a>
+            @endforeach
+        </div> --}}
+
+        {{-- <button type="submit" class="btn btn-primary"
+            style="padding: 11px 25px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;"> --}}
+        <a style="padding: 11px 25px; background: #1b1946; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;"
+            href="{{ route('/category/{id}/products', ['id' => $category['id']]) }}" style="margin-right: 5px;"> Tìm kiếm</a>
+        {{-- </button> --}}
+
+        <a href="{{ route('/products') }}" class="btn"
+            style="padding: 11px 15px; background: #f3f4f6; color: #4b5563; border-radius: 6px; text-decoration: none; font-size: 14px; text-align: center;">Reset</a>
     </form>
+
+    <div style="margin-bottom: 20px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+        <label for="sort" style="font-weight: bold;">Sắp xếp theo:</label>
+        <form method="GET" action="" id="sortForm">
+            <select name="sort" onchange="this.form.submit()">
+                <option value="">Mặc định</option>
+                <option value="price_asc" {{ $currentSort == 'price_asc' ? 'selected' : '' }}>
+                    Giá: Thấp đến Cao
+                </option>
+                <option value="price_desc" {{ $currentSort == 'price_desc' ? 'selected' : '' }}>
+                    Giá: Cao đến Thấp
+                </option>
+            </select>
+        </form>
+    </div>
+
     <div class="page-action"
         style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin: 0;">Danh sách sản phẩm</h2>
-        <a href="{{ route('/product/create') }}" class="btn btn-success"><i class="fa-solid fa-plus"></i> Thêm sản phẩm
+        <h2 style="margin: 0; font-size: 1.5rem; color: #1f2937;">Danh sách sản phẩm</h2>
+        <a href="{{ route('/product/create') }}" class="btn btn-success"
+            style="background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600;"><i
+                class="fa-solid fa-plus"></i> Thêm sản phẩm
             mới</a>
     </div>
 
@@ -39,8 +78,8 @@
                         {{-- Dữ liệu mẫu - Sau này bạn sẽ dùng @foreach ($products as $product) --}}
                         <tr>
                             <td style="padding: 15px; text-align: center;">
-                                <img src="{{ file_url($product['image']) }}"
-                                    style="border-radius: 5px; object-fit: cover;"alt="">
+                                <img src="/uploads/products/{{ $product['image'] }}" alt="{{ $product['name'] }}"
+                                    width="100">
                             </td>
                             <td style="padding: 15px;">
                                 <strong style="color: #2c3e50;">{{ $product['name'] }}</strong><br>
