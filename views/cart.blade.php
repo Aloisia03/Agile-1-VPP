@@ -62,9 +62,12 @@
                                 <input type="hidden" name="product_id" value="{{ $item['id'] }}">
                                 <input type="hidden" name="quantity" value="0">
 
-                                <button class="btn btn-danger btn-sm">
+                                <button class="btn btn-confirm-order1 btn-sm">
                                     Xóa
                                 </button>
+                                <a href="/Agile-1-VPP/checkout" class="btn btn-confirm-order btn-sm">
+                                    XÁC NHẬN ĐẶT HÀNG
+                                </a>
                             </form>
                         </td>
                     </tr>
@@ -91,6 +94,42 @@
 </div>
 
 <style>
+
+    .btn-confirm-order {
+        background-color: #59f399;
+        color: white !important;
+        padding: 7px 15px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        border: none;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    }
+    .btn-confirm-order:hover {
+        background-color: #27ae60;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+    }
+
+        .btn-confirm-order1 {
+        background-color: #d43f3f;
+        color: white !important;
+        padding: 7px 15px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 14px;
+        text-transform: uppercase;
+        border: none;
+        transition: 0.3s;
+        box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    }
+    .btn-confirm-order1:hover {
+        background-color: #ee4646;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+    }
 .content-wrapper {
     padding: 20px;
 }

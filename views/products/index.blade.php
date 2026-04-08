@@ -62,6 +62,14 @@
                                 <i class="fa-solid fa-trash"></i>
                             </a>
 
+                            <form action="/Agile-1-VPP/checkout" method="POST">
+    <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+    <input type="number" name="quantity" value="1" min="1" class="form-control mb-2" style="width: 80px;">
+    <button type="submit" class="btn btn-danger btn-block">
+        <i class="fa-solid fa-bolt"></i> MUA NGAY
+    </button>
+</form>
+
                         </td>
                     </tr>
                 @endforeach

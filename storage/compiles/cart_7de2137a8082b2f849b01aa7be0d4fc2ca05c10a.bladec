@@ -1,0 +1,204 @@
+<?php $_shouldextend[1]=1; ?>
+
+<?php $this->startSection('title', 'Giỏ hàng'); ?>
+
+<?php $this->startSection('content'); ?>
+<div class="content-wrapper">
+
+ <h2 class="page-title">🛒 Giỏ hàng của bạn</h2>
+
+ <?php if(empty($cartItems)): ?>
+ <div class="empty-cart">
+ <p>Giỏ hàng đang trống</p>
+ <a href="/Agile-1-VPP/products" class="btn btn-primary">Tiếp tục mua sắm</a>
+ </div>
+ <?php else: ?>
+
+ <div class="card">
+ <table class="cart-table">
+ <thead>
+ <tr>
+ <th>Sản phẩm</th>
+ <th>Giá</th>
+ <th>Số lượng</th>
+ <th>Tổng</th>
+ <th></th>
+ </tr>
+ </thead>
+
+ <tbody>
+ <?php $__currentLoopData = $cartItems; $this->addLoop($__currentLoopData);$this->getFirstLoop();
+ foreach($__currentLoopData as $item): $loop = $this->incrementLoopIndices();  ?>
+ <tr>
+ <td class="product-name">
+ <?php echo \htmlentities($item['name']??'', ENT_QUOTES, 'UTF-8', false); ?>
+
+ </td>
+
+ <td>
+ <?php echo \htmlentities(number_format($item['price'])??'', ENT_QUOTES, 'UTF-8', false); ?>đ
+ </td>
+
+ <td>
+ <form method="POST" action="/Agile-1-VPP/cart/update" class="form-inline">
+ <input type="hidden" name="product_id" value="<?php echo \htmlentities($item['id']??'', ENT_QUOTES, 'UTF-8', false); ?>">
+
+ <input type="number" 
+ name="quantity" 
+ value="<?php echo \htmlentities($item['quantity']??'', ENT_QUOTES, 'UTF-8', false); ?>" 
+ min="1" 
+ class="qty-input">
+
+ <button class="btn btn-primary btn-sm">
+ Cập nhật
+ </button>
+ </form>
+ </td>
+
+ <td class="subtotal">
+ <?php echo \htmlentities(number_format($item['subtotal'])??'', ENT_QUOTES, 'UTF-8', false); ?>đ
+ </td>
+
+ <td>
+ <form method="POST" action="/Agile-1-VPP/cart/update">
+ <input type="hidden" name="product_id" value="<?php echo \htmlentities($item['id']??'', ENT_QUOTES, 'UTF-8', false); ?>">
+ <input type="hidden" name="quantity" value="0">
+
+ <button class="btn btn-confirm-order1 btn-sm">
+ Xóa
+ </button>
+ <a href="/Agile-1-VPP/checkout" class="btn btn-confirm-order btn-sm">
+ XÁC NHẬN ĐẶT HÀNG
+ </a>
+ </form>
+ </td>
+ </tr>
+ <?php endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>
+ </tbody>
+ </table>
+ </div>
+
+ <div class="cart-footer">
+ <h3>Tổng: <span><?php echo \htmlentities(number_format($total)??'', ENT_QUOTES, 'UTF-8', false); ?>đ</span></h3>
+
+ <div class="actions">
+ <a href="/Agile-1-VPP/products" class="btn btn-secondary">
+ ← Mua tiếp
+ </a>
+
+ <a href="/Agile-1-VPP/checkout" class="btn btn-success">
+ Thanh toán
+ </a>
+ </div>
+ </div>
+
+ <?php endif; ?>
+</div>
+
+<style>
+
+ .btn-confirm-order {
+ background-color: #59f399;
+ color: white !important;
+ padding: 7px 15px;
+ border-radius: 8px;
+ font-weight: 700;
+ font-size: 14px;
+ text-transform: uppercase;
+ border: none;
+ transition: 0.3s;
+ box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+ }
+ .btn-confirm-order:hover {
+ background-color: #27ae60;
+ transform: translateY(-2px);
+ box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+ }
+
+ .btn-confirm-order1 {
+ background-color: #d43f3f;
+ color: white !important;
+ padding: 7px 15px;
+ border-radius: 8px;
+ font-weight: 700;
+ font-size: 14px;
+ text-transform: uppercase;
+ border: none;
+ transition: 0.3s;
+ box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+ }
+ .btn-confirm-order1:hover {
+ background-color: #ee4646;
+ transform: translateY(-2px);
+ box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+ }
+.content-wrapper {
+ padding: 20px;
+}
+
+.page-title {
+ margin-bottom: 20px;
+}
+
+.card {
+ background: #fff;
+ border-radius: 10px;
+ padding: 15px;
+ box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.cart-table {
+ width: 100%;
+ border-collapse: collapse;
+}
+
+.cart-table th {
+ text-align: left;
+ padding: 12px;
+ background: #f5f5f5;
+}
+
+.cart-table td {
+ padding: 12px;
+ border-bottom: 1px solid #eee;
+}
+
+.product-name {
+ font-weight: 500;
+}
+
+.qty-input {
+ width: 60px;
+ padding: 5px;
+ margin-right: 5px;
+}
+
+.form-inline {
+ display: flex;
+ align-items: center;
+ gap: 5px;
+}
+
+.subtotal {
+ font-weight: bold;
+ color: #e74c3c;
+}
+
+.cart-footer {
+ margin-top: 20px;
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+}
+
+.cart-footer h3 span {
+ color: #27ae60;
+}
+
+.empty-cart {
+ text-align: center;
+ padding: 40px;
+}
+</style>
+<?php $this->stopSection(); ?>
+<?php if (isset($_shouldextend[1])) { echo $this->runChild('home'); } ?>

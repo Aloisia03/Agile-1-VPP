@@ -2,7 +2,7 @@
 namespace App\Controllers;
 
 use App\Models\Product;
-
+use App\Models\Order;
 class CartController
 {
     protected $db;
@@ -80,5 +80,89 @@ class CartController
         }
 
         redirect('/cart');
+    }
+
+    public function checkout()
+    {
+        if (!isset($_SESSION['user'])) {
+            header("Location: /Agile-1-VPP/login");
+            exit;
+        }
+
+        $cartItems = [];
+        $total = 0;
+
+        // Nếu bấm "Mua ngay" từ trang sản phẩm
+        if (isset($_POST['product_id'])) {
+            $product = $this->productModel->find($_POST['product_id']);
+            if ($product) {
+                $qty = $_POST['quantity'] ?? 1;
+                $product['quantity'] = $qty;
+                $cartItems[] = $product;
+                $total = $product['price'] * $qty;
+            }
+        } 
+        // Nếu không có POST, lấy từ giỏ hàng (như cũ)
+        elseif (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+            foreach ($_SESSION['cart'] as $productId => $quantity) {
+                $product = $this->productModel->find($productId);
+                if ($product) {
+                    $product['quantity'] = $quantity;
+                    $cartItems[] = $product;
+                    $total += $product['price'] * $quantity;
+                }
+            }
+        }
+
+        if (empty($cartItems)) {
+            header("Location: /Agile-1-VPP/products");
+            exit;
+        }
+
+        // Lưu vào database (Sử dụng Model Order đã viết ở bước trước)
+        $orderModel = new \App\Models\Order($this->db);
+        $orderId = $orderModel->createOrder($_SESSION['user']['id'], $total, $cartItems);
+
+        if ($orderId) {
+            unset($_SESSION['cart']); // Đặt xong thì xóa giỏ
+            header("Location: /Agile-1-VPP/my-orders"); // Nhảy thẳng về trang đơn hàng
+            exit;
+        }
+    }
+
+    public function myOrders()
+    {
+        // 1. Kiểm tra đăng nhập
+        if (!isset($_SESSION['user'])) {
+            header("Location: /Agile-1-VPP/login");
+            exit;
+        }
+
+        // 2. Lấy dữ liệu (Dùng đúng tên biến để compact)
+        $orderModel = new \App\Models\Order($this->db);
+        $userId = $_SESSION['user']['id'];
+        $orders = $orderModel->getOrdersByUserId($userId);
+        $title = "Đơn hàng của tôi";
+
+        // 3. Trả về view theo đúng kiểu 'thư mục.file'
+        return view('users.orders', compact('title', 'orders'));
+    }
+
+    public function cancelOrder($id)
+    {
+        if (!isset($_SESSION['user'])) return header("Location: /Agile-1-VPP/login");
+
+        $orderModel = new \App\Models\Order($this->db);
+        
+        // Chỉ cho phép hủy nếu đơn hàng thuộc về user đang đăng nhập và đang chờ xác nhận
+        $sql = "UPDATE orders SET status = 'cancelled' WHERE id = ? AND user_id = ? AND status = 'pending'";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("ii", $id, $_SESSION['user']['id']);
+        
+        if ($stmt->execute()) {
+            header("Location: /Agile-1-VPP/my-orders");
+        } else {
+            die("Lỗi khi hủy đơn hàng!");
+        }
     }
 }

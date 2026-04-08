@@ -3,7 +3,7 @@
         'name' => 'php2/php2-base',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '076d3dc3ba1ed9d88c54ac296342ff60326115a3',
+        'reference' => '88d3cee0a1e78b4b75530236f3f05e0c9c1a5842',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -67,7 +67,7 @@
         'php2/php2-base' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '076d3dc3ba1ed9d88c54ac296342ff60326115a3',
+            'reference' => '88d3cee0a1e78b4b75530236f3f05e0c9c1a5842',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
