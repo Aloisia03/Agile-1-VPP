@@ -1,10 +1,58 @@
 @extends('home')
 
 @section('content')
-    <div class="page-action" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin: 0;">Danh sách sản phẩm</h2>
-        <a href="#" class="btn btn-success"><i class="fa-solid fa-plus"></i> Thêm sản phẩm mới</a>
-    </div>
+ <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
+
+    <!-- FILTER DANH MỤC -->
+    <form action="/Agile-1-VPP/products" method="GET"
+          style="display: flex; align-items: center; gap: 10px;">
+
+        <select name="category_id"
+                style="padding:10px; border:1px solid #ddd; border-radius:5px;">
+            <option value="">-- Tất cả danh mục --</option>
+
+            @foreach ($categories as $category)
+                <option value="{{ $category['id'] }}"
+                    {{ (isset($_GET['category_id']) && $_GET['category_id'] == $category['id']) ? 'selected' : '' }}>
+                    {{ $category['name'] }}
+                </option>
+            @endforeach
+        </select>
+
+        <button type="submit"
+            style="padding: 10px 15px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer;">
+            Lọc
+        </button>
+
+        <a href="/Agile-1-VPP/products"
+           style="padding: 10px 12px; background: #f3f4f6; color: #4b5563; border-radius: 6px; text-decoration: none;">
+            Reset
+        </a>
+    </form>
+
+    <!-- SORT -->
+    <form method="GET" action="/Agile-1-VPP/products"
+          style="display: flex; align-items: center; gap: 10px;">
+
+        <!-- giữ lại category khi sort -->
+        <input type="hidden" name="category_id" value="{{ $_GET['category_id'] ?? '' }}">
+
+        <label style="font-weight: bold;">Sắp xếp:</label>
+
+        <select name="sort" onchange="this.form.submit()"
+                style="padding:10px; border:1px solid #ddd; border-radius:5px;">
+            <option value="">Mặc định</option>
+            <option value="price_asc" {{ ($currentSort ?? '') == 'price_asc' ? 'selected' : '' }}>
+                Giá ↑
+            </option>
+            <option value="price_desc" {{ ($currentSort ?? '') == 'price_desc' ? 'selected' : '' }}>
+                Giá ↓
+            </option>
+        </select>
+    </form>
+
+</div>
+
 
     <div class="card"
         style="background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden;">
@@ -23,9 +71,10 @@
                 @foreach ($products as $product)
                     <tr>
                         <td style="padding: 15px; text-align: center;">
-                            <img src="{{ file_url($product['image']) }}"
-                                style="border-radius: 5px; object-fit: cover;" alt="">
-                        </td>
+    <img src="{{ file_url($product['image'] ?? '') }}" 
+         style="border-radius: 5px; object-fit: cover; width: 60px; height: 60px;" 
+         alt="">
+</td>
                         <td style="padding: 15px;">
                             <strong style="color: #2c3e50;">{{ $product['name'] }}</strong><br>
                         </td>

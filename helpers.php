@@ -39,16 +39,12 @@ if (!function_exists('redirect404')) {
 }
 
 if (!function_exists('file_url')) {
-    function file_url(?string $path): ?string
-    {
-        if (!$path) {
-            return null;
-        }
+function file_url(?string $path): ?string
+{
+    if (!$path) return null;
 
-        $base = $_ENV['APP_URL'] ?: '';
-
-        return rtrim($base, '/') . '/' . ltrim($path, '/');
-    }
+    return '/Agile-1-VPP/public/' . ltrim($path, '/');
+}
 }
 
 if (!function_exists('debug')) {

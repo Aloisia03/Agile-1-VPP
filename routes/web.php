@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php'; // 🔥 chuẩn
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
@@ -10,10 +10,9 @@ use App\Controllers\CategoryController;
 
 use Bramus\Router\Router;
 
-
 $router = new Router();
 
-// 🔥 thêm dòng này
+// base path
 $router->setBasePath('/Agile-1-VPP');
 
 // HOME
@@ -28,12 +27,20 @@ $router->post('/login', AuthController::class . '@login');
 
 $router->get('/logout', AuthController::class . '@logout');
 
+// PRODUCTS
 $router->get('/products', ProductController::class . '@index');
-$router->get('/product/show/{id}', ProductController::class . '@show');
+$router->get('/product/show/(\d+)', ProductController::class . '@show');
+$router->get('/products/search', ProductController::class . '@search');
+
+// ✅ FIX upload
+$router->post('/product/upload-image/(\d+)', ProductController::class . '@uploadImage');
+
+// CATEGORY
 $router->get('/category', CategoryController::class . '@index');
 
-
+// CART
 $router->post('/cart/add', CartController::class . '@add');
 $router->get('/cart', CartController::class . '@view');
 $router->post('/cart/update', CartController::class . '@update');
+
 $router->run();
