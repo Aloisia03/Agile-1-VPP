@@ -83,6 +83,18 @@
             gap: 10px;
         }
 
+        .user-profile-link {
+            color: var(--dark-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .user-profile-link:hover {
+            color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
         .cart-badge {
             background: red;
             color: white;
@@ -128,7 +140,9 @@
                 <?php if (isset($_SESSION['user'])): ?>
 
                     <i class="fa-regular fa-circle-user"></i>
-                    <?= $_SESSION['user']['name'] ?>
+                    <a href="/Agile-1-VPP/profile" class="user-profile-link">
+                        <?= htmlspecialchars($_SESSION['user']['name']) ?>
+                    </a>
 
                     <a href="/Agile-1-VPP/login" class="btn btn-danger">
                         Đăng xuất

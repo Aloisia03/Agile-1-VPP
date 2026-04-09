@@ -7,6 +7,7 @@ use App\Controllers\AuthController;
 use App\Controllers\ProductController;
 use App\Controllers\CartController;
 use App\Controllers\CategoryController;
+use App\Controllers\ProfileController;
 
 use Bramus\Router\Router;
 
@@ -26,6 +27,17 @@ $router->get('/login', AuthController::class . '@showLogin');
 $router->post('/login', AuthController::class . '@login');
 
 $router->get('/logout', AuthController::class . '@logout');
+
+// FORGOT PASSWORD & RESET PASSWORD
+$router->get('/forgot-password', AuthController::class . '@showForgotPassword');
+$router->post('/forgot-password', AuthController::class . '@forgotPassword');
+
+$router->get('/reset-password/(\w+)', AuthController::class . '@showResetPassword');
+$router->post('/reset-password/(\w+)', AuthController::class . '@resetPassword');
+
+// PROFILE
+$router->get('/profile', ProfileController::class . '@show');
+$router->post('/profile', ProfileController::class . '@update');
 
 // PRODUCTS
 $router->get('/products', ProductController::class . '@index');
