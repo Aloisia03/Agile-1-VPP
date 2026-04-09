@@ -1,19 +1,19 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php'; // 🔥 chuẩn
+require_once __DIR__ . '/../vendor/autoload.php';
 
 use App\Controllers\HomeController;
 use App\Controllers\AuthController;
 use App\Controllers\ProductController;
 use App\Controllers\CartController;
 use App\Controllers\CategoryController;
+use App\Controllers\ProfileController;
 
 use Bramus\Router\Router;
 
-
 $router = new Router();
 
-// 🔥 thêm dòng này
+// base path
 $router->setBasePath('/Agile-1-VPP');
 
 // HOME
@@ -28,14 +28,29 @@ $router->post('/login', AuthController::class . '@login');
 
 $router->get('/logout', AuthController::class . '@logout');
 
+// FORGOT PASSWORD & RESET PASSWORD
+$router->get('/forgot-password', AuthController::class . '@showForgotPassword');
+$router->post('/forgot-password', AuthController::class . '@forgotPassword');
+
+$router->get('/reset-password/(\w+)', AuthController::class . '@showResetPassword');
+$router->post('/reset-password/(\w+)', AuthController::class . '@resetPassword');
+
+// PROFILE
+$router->get('/profile', ProfileController::class . '@show');
+$router->post('/profile', ProfileController::class . '@update');
+
+// PRODUCTS
 $router->get('/products', ProductController::class . '@index');
+$router->get('/product/show/(\d+)', ProductController::class . '@show');
 $router->get('/products/search', ProductController::class . '@search');
-$router->get('/product/show/{id}', ProductController::class . '@show');
-$router->post('/product/upload-images/{id}', ProductController::class . '@uploadImages');
+$router->post('/product/upload-image/(\d+)', ProductController::class . '@uploadImage');
+
+// CATEGORY
 $router->get('/category', CategoryController::class . '@index');
 
-
+// CART
 $router->post('/cart/add', CartController::class . '@add');
 $router->get('/cart', CartController::class . '@view');
 $router->post('/cart/update', CartController::class . '@update');
+
 $router->run();

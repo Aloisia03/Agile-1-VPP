@@ -5,21 +5,22 @@ use App\Model;
 
 class Product extends Model
 {
-    public function getAll(){
+    public function getAll($sort = null){
         $stmt = $this->connection->createQueryBuilder();
 
         $stmt->select('p.*', 'c.name AS category_name')
             ->from('products', 'p')
-            ->innerJoin('p', 'categories', 'c', 'c.id = p.category_id')
-            ->orderBy('p.id', 'DESC');
+            ->innerJoin('p', 'categories', 'c', 'c.id = p.category_id');
 
-        $products = $stmt->executeQuery()->fetchAllAssociative();
-        foreach($products as &$product){
-            if(isset($product['images'])){
-                $product['images'] = json_decode($product['images'], true) ?? [];
-            }
+        if($sort == 'price_asc'){
+            $stmt->orderBy('p.price', 'ASC');
+        } elseif($sort == 'price_desc'){
+            $stmt->orderBy('p.price', 'DESC');
+        } else {
+            $stmt->orderBy('p.id', 'DESC');
         }
-        return $products; // 🔥 FIX
+
+        return $stmt->executeQuery()->fetchAllAssociative();
     }
 
     public function find($id){
@@ -31,11 +32,7 @@ class Product extends Model
             ->where('p.id = :id')
             ->setParameter('id', $id);
 
-        $product = $stmt->executeQuery()->fetchAssociative();
-        if($product && isset($product['images'])){
-            $product['images'] = json_decode($product['images'], true) ?? [];
-        }
-        return $product; // 🔥 FIX
+        return $stmt->executeQuery()->fetchAssociative();
     }
 
     public function search($keyword){
@@ -48,22 +45,38 @@ class Product extends Model
             ->setParameter('keyword', '%' . $keyword . '%')
             ->orderBy('p.id', 'DESC');
 
-        $products = $stmt->executeQuery()->fetchAllAssociative();
-        foreach($products as &$product){
-            if(isset($product['images'])){
-                $product['images'] = json_decode($product['images'], true) ?? [];
-            }
-        }
-        return $products;
+        return $stmt->executeQuery()->fetchAllAssociative();
     }
 
-    public function updateImages($id, $imagesJson){
+    public function updateImage($id, $imagePath){
         $stmt = $this->connection->createQueryBuilder();
+
         $stmt->update('products')
-            ->set('images', ':images')
+            ->set('image', ':image')
             ->where('id = :id')
-            ->setParameter('images', $imagesJson)
+            ->setParameter('image', $imagePath)
             ->setParameter('id', $id);
+
         $stmt->executeStatement();
+    }
+
+    public function getByCategory($category_id, $sort = null){
+        $stmt = $this->connection->createQueryBuilder();
+
+        $stmt->select('p.*', 'c.name AS category_name')
+            ->from('products', 'p')
+            ->innerJoin('p', 'categories', 'c', 'c.id = p.category_id')
+            ->where('p.category_id = :category_id')
+            ->setParameter('category_id', $category_id);
+
+        if($sort == 'price_asc'){
+            $stmt->orderBy('p.price', 'ASC');
+        } elseif($sort == 'price_desc'){
+            $stmt->orderBy('p.price', 'DESC');
+        } else {
+            $stmt->orderBy('p.id', 'DESC');
+        }
+
+        return $stmt->executeQuery()->fetchAllAssociative();
     }
 }

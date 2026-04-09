@@ -6,17 +6,6 @@
         <a href="#" class="btn btn-success"><i class="fa-solid fa-plus"></i> Thêm sản phẩm mới</a>
     </div>
 
-    <!-- Search Box -->
-    <div class="search-box" style="margin-bottom: 20px;">
-        <form method="GET" action="/Agile-1-VPP/products/search" style="display: flex; gap: 10px;">
-            <input type="text" name="keyword" value="{{ $keyword ?? '' }}" placeholder="Tìm kiếm sản phẩm..." 
-                   style="flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
-            <button type="submit" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-                <i class="fa fa-search"></i> Tìm kiếm
-            </button>
-        </form>
-    </div>
-
     <div class="card"
         style="background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden;">
         <table style="width: 100%; border-collapse: collapse;">
@@ -34,11 +23,8 @@
                 @foreach ($products as $product)
                     <tr>
                         <td style="padding: 15px; text-align: center;">
-                            @if(isset($product['images']) && is_array($product['images']) && count($product['images']) > 0)
-                                <img src="{{ file_url($product['images'][0]) }}" style="border-radius: 5px; object-fit: cover; width: 60px; height: 60px;" alt="">
-                            @else
-                                <img src="{{ file_url($product['image']) }}" style="border-radius: 5px; object-fit: cover; width: 60px; height: 60px;" alt="">
-                            @endif
+                            <img src="{{ file_url($product['image']) }}"
+                                style="border-radius: 5px; object-fit: cover;" alt="">
                         </td>
                         <td style="padding: 15px;">
                             <strong style="color: #2c3e50;">{{ $product['name'] }}</strong><br>
