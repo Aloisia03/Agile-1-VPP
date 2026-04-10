@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Văn Phòng Phẩm</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
             --sidebar-width: 260px;
@@ -22,17 +24,14 @@
             color: #333;
         }
 
-        /* Sidebar kế thừa style cũ nhưng làm mịn hơn */
         .sidebar {
             width: var(--sidebar-width);
             height: 100vh;
             background: var(--dark-blue);
             color: white;
             position: fixed;
-            z-index: 1000;
         }
 
-        /* Tinh chỉnh phần Main Content */
         .main-container {
             margin-left: var(--sidebar-width);
             width: calc(100% - var(--sidebar-width));
@@ -48,9 +47,6 @@
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 999;
         }
 
         .content {
@@ -58,49 +54,103 @@
             flex: 1;
         }
 
-        /* Các class dùng chung cho các trang con */
         .btn {
             padding: 8px 16px;
             border-radius: 6px;
             text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
             border: none;
-            transition: 0.3s;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-success {
-            background: #27ae60;
-            color: white;
+            margin-left: 8px;
         }
 
         .btn-danger {
             background: #e74c3c;
             color: white;
         }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-cart {
+            background: #27ae60;
+            color: white;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-badge {
+            background: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            margin-left: 4px;
+        }
     </style>
 </head>
 
 <body>
+
     @include('partials.sidebar')
 
     <div class="main-container">
+
         <header>
-            <div class="breadcrumb">Admin / <strong>Sản phẩm</strong></div>
-            <div class="user-info">
-                <i class="fa-regular fa-circle-user"></i> Xin chào, Quản trị viên
+            <div class="breadcrumb">
+                Admin / <strong>@yield('title')</strong>
+            </div>
+
+            <div class="top-actions">
+
+                <!-- 🛒 GIỎ HÀNG -->
+                <?php
+                $cartCount = 0;
+                if (isset($_SESSION['cart'])) {
+                    foreach ($_SESSION['cart'] as $qty) {
+                        $cartCount += $qty;
+                    }
+                }
+                ?>
+                <a href="/Agile-1-VPP/cart" class="btn btn-cart">
+                    <i class="fa fa-shopping-cart"></i>
+                    Giỏ hàng
+                    <?php if ($cartCount > 0): ?>
+                    <span class="cart-badge"><?= $cartCount ?></span>
+                    <?php endif; ?>
+                </a>
+
+                <!-- 👤 USER -->
+                <?php if (isset($_SESSION['user'])): ?>
+
+                <i class="fa-regular fa-circle-user"></i>
+                <?= $_SESSION['user']['name'] ?>
+
+                <a href="/Agile-1-VPP/login" class="btn btn-danger">
+                    Đăng xuất
+                </a>
+
+                <?php else: ?>
+
+                <a href="/Agile-1-VPP/login" class="btn btn-primary">
+                    Đăng nhập
+                </a>
+
+                <?php endif; ?>
+
             </div>
         </header>
 
         <div class="content">
             @yield('content')
         </div>
+
     </div>
+
 </body>
 
 </html>

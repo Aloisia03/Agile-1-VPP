@@ -1,94 +1,136 @@
 <?php 
 namespace App\Controllers;
 
-use App\Controller;
-use App\Models\Category;
 use App\Models\Product;
-use Exception;
-use Rakit\Validation\Validator;
 
-class ProductController extends Controller
+class ProductController
 {
     private $modelProducts;
-    private $modelCategory;
-    private $validator;
 
     public function __construct()
     {
         $this->modelProducts = new Product();
-        $this->modelCategory = new Category();
-        $this->validator = new Validator();
     }
+
     public function index(){
-        $currentSort = $_GET['sort'] ?? '';
-        $products = $this->modelProducts->getAll($currentSort);
-        $categories = $this->modelCategory->getAll();
-        return view('products.index', compact('products', 'categories', 'currentSort'));
+    $category_id = $_GET['category_id'] ?? null;
+    $sort = $_GET['sort'] ?? null;
+
+    if($category_id){
+        $products = $this->modelProducts->getByCategory($category_id, $sort);
+    } else {
+        $products = $this->modelProducts->getAll($sort);
     }
-    public function show($id){
-        $product = $this->modelProducts->findById($id);
-        return view('products.show', compact('product'));
-    }
-    public function listByCategory($id) {
-        $products = $this->modelProducts->findByCategory($id);
-        $categories = $this->modelCategory->getAll();
-        return view('products.listByCategory', compact('products', 'categories'));
-    }
-    public function filterByCategory($id){
-        $category = $this->modelCategory->getOne($id);
-        $title = "Danh mục: " . ($category['name'] ?? 'Không xác định');
-        
-        $products = $this->modelProducts->findByCategory($id);
-        $categories = $this->modelCategory->getAll(); 
-        
-        return view('products.listByCategory', compact('title', 'products', 'categories'));
-    }
-    public function create(){
-        $categories = $this->modelCategory->getAll();
+
+    $categories = (new \App\Models\Category())->getAll();
+
+    return view('products.index', compact('products','categories','sort'));
+}
+
+    public function create() {
+        $categories = (new \App\Models\Category())->getAll();
         return view('products.create', compact('categories'));
     }
-    public function store()
-    {
-        $data = [
-            'name' => $_POST['name'],
-            'price' => $_POST['price'],
-            'category_id' => $_POST['category_id'],
-            'description' => $_POST['description'],
-        ];
 
+    public function store() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'name' => $_POST['name'] ?? '',
+                'category_id' => $_POST['category_id'] ?? null,
+                'price' => $_POST['price'] ?? 0,
+                'description' => $_POST['description'] ?? ''
+            ];
 
+            if(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK){
+                $uploadDir = __DIR__ . '/../../public/uploads/';
+                if(!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+                $fileName = uniqid() . '_' . basename($_FILES['image']['name']);
+                if(move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)){
+                    $data['image'] = 'uploads/' . $fileName;
+                }
+            }
 
-        $rules = [
-            'name'        => 'required|max:50',
-            'category_id' => 'required|integer',
-            'price'       => 'required|numeric',
-            'description'  => 'required|string|max:255',
-        ];
-
-        $error = $this->validate($this->validator, $data, $rules);
-
-        if (!empty($error)) {
-            setFlash('error', reset($error));
-            return redirect('/product/create');
-        }
-
-
-        //xử lý hình ảnh
-
-        if (is_upload('image')) {
-            $data['image'] = $this->uploadFile($_FILES['image'], 'products');
-        } else {
-            $data['image'] = null;
-        };
-        // debug($data);
-
-        try {
             $this->modelProducts->insert($data);
-            setFlash('success', 'thêm sản phẩm thành công');
-        } catch (Exception $e) {
-            setFlash('error', 'Có lỗi xảy ra');
+            header("Location: /Agile-1-VPP/products");
+            exit;
         }
-
-        redirect('/products');
     }
+
+    public function edit($id) {
+        $product = $this->modelProducts->find($id);
+        if (!$product) {
+            header("Location: /Agile-1-VPP/products");
+            exit;
+        }
+        $categories = (new \App\Models\Category())->getAll();
+        return view('products.edit', compact('product', 'categories'));
+    }
+
+    public function update($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'name' => $_POST['name'] ?? '',
+                'category_id' => $_POST['category_id'] ?? null,
+                'price' => $_POST['price'] ?? 0,
+                'description' => $_POST['description'] ?? ''
+            ];
+
+            if(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK){
+                $uploadDir = __DIR__ . '/../../public/uploads/';
+                if(!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+                $fileName = uniqid() . '_' . basename($_FILES['image']['name']);
+                if(move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)){
+                    $data['image'] = 'uploads/' . $fileName;
+                }
+            }
+
+            $this->modelProducts->updateProduct($id, $data);
+            header("Location: /Agile-1-VPP/products");
+            exit;
+        }
+    }
+    
+    public function show($id){
+        $product = $this->modelProducts->find($id);
+        return view('products.show', compact('product'));
+    }
+
+    public function search(){
+        $keyword = $_GET['keyword'] ?? '';
+        if(empty($keyword)){
+            $products = $this->modelProducts->getAll();
+        } else {
+            $products = $this->modelProducts->search($keyword);
+        }
+        return view('products.index', compact('products', 'keyword'));
+    }
+
+    public function uploadImage($id){
+    if($_SERVER['REQUEST_METHOD'] !== 'POST') return;
+
+    $product = $this->modelProducts->find($id);
+    if(!$product) return;
+
+    // kiểm tra file upload
+    if(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK){
+
+        $uploadDir = __DIR__ . '/../../public/uploads/';
+        if(!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+        $file = $_FILES['image'];
+
+        $fileName = uniqid() . '_' . basename($file['name']);
+        $filePath = $uploadDir . $fileName;
+
+        if(move_uploaded_file($file['tmp_name'], $filePath)){
+            $imagePath = 'uploads/' . $fileName;
+
+            // ✅ update 1 ảnh
+            $this->modelProducts->updateImage($id, $imagePath);
+        }
+    }
+
+    header("Location: /Agile-1-VPP/product/show/$id");
+    exit;
+}
 }

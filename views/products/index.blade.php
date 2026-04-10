@@ -1,63 +1,63 @@
-@extends('home') {{-- Hoặc tên file layout của bạn --}}
+@extends('home')
 
 @section('content')
-    <form action="/products" method="GET"
-        style="padding: 11px 25px; background: #e7e5e5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;">
-        <select name="category_id" onchange="">
-            <option value="">-- Tất cả danh mục --</option>
-            @foreach ($categories as $category)
-                <option value="{{ $category['id'] }}"
-                    {{ isset($_GET['category_id']) && $_GET['category_id'] == $category['id'] ? 'selected' : '' }}>
-                    {{ $category['name'] }}
-                </option>
-            @endforeach
-        </select>
+    <div
+        style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
 
-        {{-- <div class="category-search mb-4" style="margin-bottom: 20px;">
-            <strong>Lọc theo danh mục: </strong>
-            <a href="{{ route('/products') }}" class="btn btn-outline-secondary btn-sm">Tất cả sản phẩm</a>
+        <!-- FILTER DANH MỤC -->
+        <form action="/Agile-1-VPP/products" method="GET" style="display: flex; align-items: center; gap: 10px;">
 
-            @foreach ($categories as $cat)
-                <a href="{{ route('/category/{id}/products', ['id' => $cat['id']]) }}"
-                    class="btn btn-outline-primary btn-sm">
-                    {{ $cat['name'] }}
-                </a>
-            @endforeach
-        </div> --}}
+            <select name="category_id" style="padding:10px; border:1px solid #ddd; border-radius:5px;">
+                <option value="">-- Tất cả danh mục --</option>
 
-        {{-- <button type="submit" class="btn btn-primary"
-            style="padding: 11px 25px; background: #4f46e5; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;"> --}}
-        <a style="padding: 11px 25px; background: #1b1946; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;"
-            href="{{ route('/category/{id}/products', ['id' => $category['id']]) }}" style="margin-right: 5px;"> Tìm kiếm</a>
-        {{-- </button> --}}
+                @foreach ($categories as $category)
+                    <option value="{{ $category['id'] }}"
+                        {{ isset($_GET['category_id']) && $_GET['category_id'] == $category['id'] ? 'selected' : '' }}>
+                        {{ $category['name'] }}
+                    </option>
+                @endforeach
+            </select>
 
-        <a href="{{ route('/products') }}" class="btn"
-            style="padding: 11px 15px; background: #f3f4f6; color: #4b5563; border-radius: 6px; text-decoration: none; font-size: 14px; text-align: center;">Reset</a>
-    </form>
+            <button type="submit"
+                style="padding: 10px 15px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                Lọc
+            </button>
 
-    <div style="margin-bottom: 20px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-        <label for="sort" style="font-weight: bold;">Sắp xếp theo:</label>
-        <form method="GET" action="" id="sortForm">
-            <select name="sort" onchange="this.form.submit()">
+            <a href="/Agile-1-VPP/products"
+                style="padding: 10px 12px; background: #f3f4f6; color: #4b5563; border-radius: 6px; text-decoration: none;">
+                Reset
+            </a>
+        </form>
+
+        <!-- SORT -->
+        <form method="GET" action="/Agile-1-VPP/products" style="display: flex; align-items: center; gap: 10px;">
+
+            <!-- giữ lại category khi sort -->
+            <input type="hidden" name="category_id" value="{{ $_GET['category_id'] ?? '' }}">
+
+            <label style="font-weight: bold;">Sắp xếp:</label>
+
+            <select name="sort" onchange="this.form.submit()"
+                style="padding:10px; border:1px solid #ddd; border-radius:5px;">
                 <option value="">Mặc định</option>
-                <option value="price_asc" {{ $currentSort == 'price_asc' ? 'selected' : '' }}>
-                    Giá: Thấp đến Cao
+                <option value="price_asc" {{ ($currentSort ?? '') == 'price_asc' ? 'selected' : '' }}>
+                    Giá ↑
                 </option>
-                <option value="price_desc" {{ $currentSort == 'price_desc' ? 'selected' : '' }}>
-                    Giá: Cao đến Thấp
+                <option value="price_desc" {{ ($currentSort ?? '') == 'price_desc' ? 'selected' : '' }}>
+                    Giá ↓
                 </option>
             </select>
         </form>
+
+        <div style="margin-top: 10px; width: 100%; display: flex; justify-content: flex-end;">
+            <a href="/Agile-1-VPP/product/create"
+                style="padding: 10px 15px; background: #27ae60; color: white; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                + Thêm sản phẩm
+            </a>
+        </div>
+
     </div>
 
-    <div class="page-action"
-        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2 style="margin: 0; font-size: 1.5rem; color: #1f2937;">Danh sách sản phẩm</h2>
-        <a href="{{ route('/product/create') }}" class="btn btn-success"
-            style="background: #10b981; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: 600;"><i
-                class="fa-solid fa-plus"></i> Thêm sản phẩm
-            mới</a>
-    </div>
 
     <div class="card"
         style="background: white; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden;">
@@ -74,41 +74,61 @@
             </thead>
             <tbody>
                 @foreach ($products as $product)
-                    <form action="" enctype="multipart/form-data">
-                        {{-- Dữ liệu mẫu - Sau này bạn sẽ dùng @foreach ($products as $product) --}}
-                        <tr>
-                            <td style="padding: 15px; text-align: center;">
-                                <img src="/uploads/products/{{ $product['image'] }}" alt="{{ $product['name'] }}"
-                                    width="100">
-                            </td>
-                            <td style="padding: 15px;">
-                                <strong style="color: #2c3e50;">{{ $product['name'] }}</strong><br>
-                                {{-- <small style="color: #7f8c8d;">SKU: TL027-XANH</small> --}}
-                            </td>
-                            <td style="padding: 15px;">{{ $product['category_name'] }}</td>
-                            <td style="padding: 15px;"><strong>{{ $product['price'] }}</strong></td>
-                            <td style="padding: 15px;">
-                                <span
-                                    style="background: #e1f7ec; color: #27ae60; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;">
-                                    {{ $product['description'] }}</span>
-                                </span>
-                            </td>
-                            <td style="padding: 15px; text-align: center;">
-                                <a href="{{ route('/product/show/' . $product['id']) }}"
-                                    style="color: #3498db; margin-right: 10px;" title="chi tiết">Chi tiết</a>
-                                <a href="#" style="color: #e74c3c;" title="Xóa"><i
-                                        class="fa-solid fa-trash"></i></a>
-                            </td>
-                        </tr>
-                    </form>
+                    <tr>
+                        <td style="padding: 15px; text-align: center;">
+                            <img src="{{ file_url($product['image'] ?? '') }}"
+                                style="border-radius: 5px; object-fit: cover; width: 60px; height: 60px;" alt="">
+                        </td>
+                        <td style="padding: 15px;">
+                            <strong style="color: #2c3e50;">{{ $product['name'] }}</strong><br>
+                        </td>
+                        <td style="padding: 15px;">{{ $product['category_name'] }}</td>
+                        <td style="padding: 15px;"><strong>{{ $product['price'] }}</strong></td>
+                        <td style="padding: 15px;">
+                            <span
+                                style="background: #e1f7ec; color: #27ae60; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold;">
+                                {{ $product['description'] }}
+                            </span>
+                        </td>
+
+                        <td style="padding: 15px; text-align: center;">
+
+                            <!-- Chi tiết -->
+                            <a href="{{ route('/product/show/' . $product['id']) }}"
+                                style="color: #3498db; margin-right: 10px;" title="chi tiết">
+                                Chi tiết
+                            </a>
+
+                            <!-- 🛒 THÊM GIỎ HÀNG -->
+                            <form method="POST" action="/Agile-1-VPP/cart/add" style="display:inline;">
+                                <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit"
+                                    style="background:#27ae60; color:white; border:none; padding:5px 8px; border-radius:5px; cursor:pointer; margin-right:8px;"
+                                    title="Thêm giỏ hàng">
+                                    <i class="fa fa-cart-plus"></i>
+                                </button>
+                            </form>
+
+                            <!-- Sửa -->
+                            <a href="/Agile-1-VPP/product/edit/{{ $product['id'] }}"
+                                style="color: #f39c12; margin-right: 10px;" title="Sửa">
+                                <i class="fa-solid fa-pen"></i> Sửa
+                            </a>
+
+                            <!-- Xóa -->
+                            <a href="#" style="color: #e74c3c;" title="Xóa">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+
+                        </td>
+                    </tr>
                 @endforeach
-                {{-- Kết thúc mẫu --}}
             </tbody>
         </table>
     </div>
 
     <style>
-        /* Hiệu ứng hover cho dòng trong bảng */
         tbody tr:hover {
             background-color: #fcfcfc;
         }

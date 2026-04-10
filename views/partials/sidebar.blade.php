@@ -1,42 +1,36 @@
 <aside class="sidebar">
     <div class="sidebar-logo">
         <i class="fa-solid fa-pen-nib"></i>
-        <span>VPP ADMIN</span>
+        <span>Menu Shop </span>
     </div>
 
-    <nav class="sidebar-nav">
-        <small class="nav-label">CHÍNH</small>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-chart-line"></i>
-            <span>Bảng điều khiển</span>
-        </a>
+    <small class="nav-label">TRANG CHỦ</small>
+    <a href="{{ route('products') }}" class="nav-item">
+        <i class="fa-solid fa-box"></i>
+        <span>Sản phẩm</span>
+    </a>
+    <a href="{{ route('category') }}" class="nav-item">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Danh mục</span>
+    </a>
 
-        <small class="nav-label">QUẢN LÝ KHO</small>
-        <a href="{{ route('products') }}" class="nav-item">
-            <i class="fa-solid fa-box"></i>
-            <span>Sản phẩm</span>
-        </a>
-        <a href="{{ route('category') }}" class="nav-item">
-            <i class="fa-solid fa-layer-group"></i>
-            <span>Danh mục</span>
-        </a>
+    <small class="nav-label">GIAO DỊCH</small>
+    <a href="#" class="nav-item">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Đơn hàng</span>
+        {{-- <span class="badge-count"></span> Số đơn hàng mới --}}
+    </a>
 
-        <small class="nav-label">GIAO DỊCH</small>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span>Đơn hàng</span>
-            <span class="badge-count">5</span> {{-- Số đơn hàng mới --}}
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-users"></i>
-            <span>Khách hàng</span>
-        </a>
 
-        <small class="nav-label">HỆ THỐNG</small>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-gear"></i>
-            <span>Cài đặt</span>
-        </a>
+    <small class="nav-label">HỆ THỐNG</small>
+    <a href="#" class="nav-item">
+        <i class="fa-solid fa-users"></i>
+        <span>Khách hàng</span>
+    </a>
+    <a href="#" class="nav-item">
+        <i class="fa-solid fa-gear"></i>
+        <span>Cài đặt</span>
+    </a>
     </nav>
 </aside>
 
