@@ -6,7 +6,7 @@ class User {
     private $conn;
 
     public function __construct() {
-        $this->conn = new \mysqli("localhost", "root", "", "duanagile");
+        $this->conn = new \mysqli("localhost", "root", "", "vpp_agile");
 
         if ($this->conn->connect_error) {
             die("Lỗi kết nối DB: " . $this->conn->connect_error);
