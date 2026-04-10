@@ -1,0 +1,96 @@
+@extends('layouts.client')
+
+@section('title', $product['name'])
+
+@section('content')
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent px-0 pb-2 border-bottom">
+            <li class="breadcrumb-item"><a href="/Agile-1-VPP/client/home" class="text-info">Trang chủ</a></li>
+            <li class="breadcrumb-item"><a href="/Agile-1-VPP/client/products" class="text-info">Sản phẩm</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ $product['name'] }}</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm border-0 rounded-lg mt-3">
+        <div class="row no-gutters">
+            <div class="col-md-5 p-4 d-flex align-items-center justify-content-center bg-white rounded-left">
+                <img src="/Agile-1-VPP/public/uploads/{{ $product['image'] }}" class="img-fluid rounded" alt="{{ $product['name'] }}" style="max-height: 450px; object-fit: contain;">
+            </div>
+
+            <div class="col-md-7 p-5 bg-light">
+                <h2 class="font-weight-bold text-dark mb-2">{{ $product['name'] }}</h2>
+                <p class="text-muted mb-4">Mã SP: #{{ $product['id'] }} | Tình trạng: <span class="badge badge-success px-2 py-1">Còn hàng</span></p>
+
+                <input type="hidden" id="base_price" value="{{ $product['price'] }}">
+
+                <div class="p-3 bg-white border border-info rounded mb-4">
+                    <h2 class="text-danger font-weight-bold mb-0" id="display_price">
+                        {{ number_format($product['price'], 0, ',', '.') }} ₫
+                    </h2>
+                </div>
+
+                <p class="mb-4" style="line-height: 1.8;">
+                    {{ $product['description'] ?? 'Đang cập nhật mô tả chi tiết cho sản phẩm này...' }}
+                </p>
+
+                <form action="/Agile-1-VPP/client/cart/add" method="POST">
+                    <input type="hidden" name="product_id" value="{{ $product['id'] }}">
+                    
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="mr-3 font-weight-bold">Số lượng:</span>
+                        <div class="input-group" style="width: 140px;">
+                            <div class="input-group-prepend">
+                                <button class="btn btn-outline-secondary font-weight-bold" type="button" onclick="updateQuantity(-1)">-</button>
+                            </div>
+                            <input type="number" id="qty_input" name="quantity" class="form-control text-center font-weight-bold bg-white" value="1" min="1" readonly>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary font-weight-bold" type="button" onclick="updateQuantity(1)">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-5">
+                        <div class="col-sm-6 mb-3">
+                            <button type="submit" class="btn btn-outline-info btn-block py-3 font-weight-bold shadow-sm" style="font-size: 1.1rem;">
+                                <i class="fa-solid fa-cart-plus mr-2"></i> Thêm vào giỏ
+                            </button>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <button type="submit" name="buy_now" value="true" class="btn btn-info btn-block py-3 font-weight-bold shadow" style="font-size: 1.1rem;">
+                                Mua ngay <i class="fa-solid fa-bolt ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+    function updateQuantity(step) {
+        // Lấy ô input số lượng, giá trị gốc và thẻ h2 hiển thị giá
+        let input = document.getElementById('qty_input');
+        let basePrice = parseInt(document.getElementById('base_price').value);
+        let displayPrice = document.getElementById('display_price');
+        
+        // Tính toán số lượng mới
+        let currentVal = parseInt(input.value);
+        let newVal = currentVal + step;
+
+        // Chỉ cho phép tăng/giảm nếu số lượng mới >= 1
+        if (newVal >= 1) {
+            input.value = newVal; // Cập nhật lại ô input
+            
+            // Tính tổng tiền = giá gốc * số lượng mới
+            let totalPrice = basePrice * newVal;
+            
+            // Format lại tiền theo chuẩn Việt Nam (vd: 1.000.000) và gán lại lên màn hình
+            displayPrice.innerText = new Intl.NumberFormat('vi-VN').format(totalPrice) + ' ₫';
+        }
+    }
+</script>
+@endpush

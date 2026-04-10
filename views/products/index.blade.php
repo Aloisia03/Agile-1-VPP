@@ -1,57 +1,62 @@
 @extends('home')
 
 @section('content')
- <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
+    <div
+        style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap;">
 
-    <!-- FILTER DANH MỤC -->
-    <form action="/Agile-1-VPP/products" method="GET"
-          style="display: flex; align-items: center; gap: 10px;">
+        <!-- FILTER DANH MỤC -->
+        <form action="/Agile-1-VPP/products" method="GET" style="display: flex; align-items: center; gap: 10px;">
 
-        <select name="category_id"
+            <select name="category_id" style="padding:10px; border:1px solid #ddd; border-radius:5px;">
+                <option value="">-- Tất cả danh mục --</option>
+
+                @foreach ($categories as $category)
+                    <option value="{{ $category['id'] }}"
+                        {{ isset($_GET['category_id']) && $_GET['category_id'] == $category['id'] ? 'selected' : '' }}>
+                        {{ $category['name'] }}
+                    </option>
+                @endforeach
+            </select>
+
+            <button type="submit"
+                style="padding: 10px 15px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                Lọc
+            </button>
+
+            <a href="/Agile-1-VPP/products"
+                style="padding: 10px 12px; background: #f3f4f6; color: #4b5563; border-radius: 6px; text-decoration: none;">
+                Reset
+            </a>
+        </form>
+
+        <!-- SORT -->
+        <form method="GET" action="/Agile-1-VPP/products" style="display: flex; align-items: center; gap: 10px;">
+
+            <!-- giữ lại category khi sort -->
+            <input type="hidden" name="category_id" value="{{ $_GET['category_id'] ?? '' }}">
+
+            <label style="font-weight: bold;">Sắp xếp:</label>
+
+            <select name="sort" onchange="this.form.submit()"
                 style="padding:10px; border:1px solid #ddd; border-radius:5px;">
-            <option value="">-- Tất cả danh mục --</option>
-
-            @foreach ($categories as $category)
-                <option value="{{ $category['id'] }}"
-                    {{ (isset($_GET['category_id']) && $_GET['category_id'] == $category['id']) ? 'selected' : '' }}>
-                    {{ $category['name'] }}
+                <option value="">Mặc định</option>
+                <option value="price_asc" {{ ($currentSort ?? '') == 'price_asc' ? 'selected' : '' }}>
+                    Giá ↑
                 </option>
-            @endforeach
-        </select>
+                <option value="price_desc" {{ ($currentSort ?? '') == 'price_desc' ? 'selected' : '' }}>
+                    Giá ↓
+                </option>
+            </select>
+        </form>
 
-        <button type="submit"
-            style="padding: 10px 15px; background: #4f46e5; color: white; border: none; border-radius: 6px; cursor: pointer;">
-            Lọc
-        </button>
+        <div style="margin-top: 10px; width: 100%; display: flex; justify-content: flex-end;">
+            <a href="/Agile-1-VPP/product/create"
+                style="padding: 10px 15px; background: #27ae60; color: white; border-radius: 6px; text-decoration: none; font-weight: bold;">
+                + Thêm sản phẩm
+            </a>
+        </div>
 
-        <a href="/Agile-1-VPP/products"
-           style="padding: 10px 12px; background: #f3f4f6; color: #4b5563; border-radius: 6px; text-decoration: none;">
-            Reset
-        </a>
-    </form>
-
-    <!-- SORT -->
-    <form method="GET" action="/Agile-1-VPP/products"
-          style="display: flex; align-items: center; gap: 10px;">
-
-        <!-- giữ lại category khi sort -->
-        <input type="hidden" name="category_id" value="{{ $_GET['category_id'] ?? '' }}">
-
-        <label style="font-weight: bold;">Sắp xếp:</label>
-
-        <select name="sort" onchange="this.form.submit()"
-                style="padding:10px; border:1px solid #ddd; border-radius:5px;">
-            <option value="">Mặc định</option>
-            <option value="price_asc" {{ ($currentSort ?? '') == 'price_asc' ? 'selected' : '' }}>
-                Giá ↑
-            </option>
-            <option value="price_desc" {{ ($currentSort ?? '') == 'price_desc' ? 'selected' : '' }}>
-                Giá ↓
-            </option>
-        </select>
-    </form>
-
-</div>
+    </div>
 
 
     <div class="card"
@@ -71,10 +76,9 @@
                 @foreach ($products as $product)
                     <tr>
                         <td style="padding: 15px; text-align: center;">
-    <img src="{{ file_url($product['image'] ?? '') }}" 
-         style="border-radius: 5px; object-fit: cover; width: 60px; height: 60px;" 
-         alt="">
-</td>
+                            <img src="{{ file_url($product['image'] ?? '') }}"
+                                style="border-radius: 5px; object-fit: cover; width: 60px; height: 60px;" alt="">
+                        </td>
                         <td style="padding: 15px;">
                             <strong style="color: #2c3e50;">{{ $product['name'] }}</strong><br>
                         </td>
@@ -106,11 +110,18 @@
                                 </button>
                             </form>
 
-                            <!-- Xóa -->
-                            <a href="#" style="color: #e74c3c;" title="Xóa">
-                                <i class="fa-solid fa-trash"></i>
+                            <!-- Sửa -->
+                            <a href="/Agile-1-VPP/product/edit/{{ $product['id'] }}"
+                                style="color: #f39c12; margin-right: 10px;" title="Sửa">
+                                <i class="fa-solid fa-pen"></i> Sửa
                             </a>
 
+                            <!-- Xóa -->
+                            <a href="/Agile-1-VPP/product/delete/{{ $product['id'] }}"
+                                onclick="return confirm('Bạn có chắc muốn xóa không?')" style="color: #e74c3c;"
+                                title="Xóa">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
                         </td>
                     </tr>
                 @endforeach

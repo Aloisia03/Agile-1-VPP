@@ -8,17 +8,25 @@ class CartController
     protected $db;
     protected $productModel;
 
-  public function __construct()
-{
-    $this->db = require_once __DIR__ . '/../../config/database.php';
+    public function __construct()
+    {
+        $this->db = require_once __DIR__ . '/../../config/database.php';
 
-    if (!$this->db) {
-        die("Không kết nối được DB");
+        if (!$this->db) {
+            die("Không kết nối được DB");
+        }
+
+        $this->productModel = new Product($this->db);
+
+        // đảm bảo có session
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
     }
 
-    $this->productModel = new Product($this->db);
-}
-
+    // =========================
+    // 🛒 ADD TO CART
+    // =========================
     public function add()
     {
         $productId = $_POST['product_id'] ?? null;
@@ -28,12 +36,10 @@ class CartController
             redirect('/products');
         }
 
-        // Khởi tạo session nếu chưa có
         if (!isset($_SESSION['cart'])) {
             $_SESSION['cart'] = [];
         }
 
-        // Thêm hoặc cập nhật số lượng
         if (isset($_SESSION['cart'][$productId])) {
             $_SESSION['cart'][$productId] += $quantity;
         } else {
@@ -43,6 +49,9 @@ class CartController
         redirect('/products');
     }
 
+    // =========================
+    // 🛒 VIEW CART (FIX LỖI Ở ĐÂY)
+    // =========================
     public function view()
     {
         $cartItems = [];
@@ -50,10 +59,26 @@ class CartController
 
         if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
             foreach ($_SESSION['cart'] as $productId => $quantity) {
+
                 $product = $this->productModel->find($productId);
+
                 if ($product) {
+
+                    // 🔥 FIX CỨNG: đảm bảo price là số
+                    $price = $product['price'];
+
+                    if (is_array($price)) {
+                        $price = (int) ($price[0] ?? 0);
+                    } else {
+                        $price = (int) $price;
+                    }
+
+                    $quantity = (int) $quantity;
+
+                    $product['price'] = $price;
                     $product['quantity'] = $quantity;
-                    $product['subtotal'] = $product['price'] * $quantity;
+                    $product['subtotal'] = $price * $quantity;
+
                     $cartItems[] = $product;
                     $total += $product['subtotal'];
                 }
@@ -66,6 +91,9 @@ class CartController
         ]);
     }
 
+    // =========================
+    // 🔄 UPDATE CART
+    // =========================
     public function update()
     {
         $productId = $_POST['product_id'] ?? null;
