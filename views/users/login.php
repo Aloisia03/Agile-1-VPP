@@ -45,6 +45,8 @@
 
                     <div class="text-center mt-3">
                         <a href="/Agile-1-VPP/register">Chưa có tài khoản? Đăng ký</a>
+                        <br>
+                        <a href="/Agile-1-VPP/forgot-password">Quên mật khẩu?</a>
                     </div>
 
                 </div>

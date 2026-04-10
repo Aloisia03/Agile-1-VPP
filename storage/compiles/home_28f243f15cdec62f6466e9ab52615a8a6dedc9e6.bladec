@@ -83,6 +83,18 @@
  gap: 10px;
  }
 
+ .user-profile-link {
+ color: var(--dark-blue);
+ text-decoration: none;
+ font-weight: 600;
+ transition: color 0.2s ease, transform 0.2s ease;
+ }
+
+ .user-profile-link:hover {
+ color: var(--primary-color);
+ transform: translateY(-1px);
+ }
+
  .cart-badge {
  background: red;
  color: white;
@@ -102,7 +114,6 @@
 
  <header>
  <div class="breadcrumb">
- Admin / <strong><?php echo $this->yieldContent('title'); ?></strong>
  </div>
 
  <div class="top-actions">
@@ -110,9 +121,17 @@
  <!-- 🛒 GIỎ HÀNG -->
  <?php 
  $cartCount = 0;
- if (isset($_SESSION['cart'])) {
- foreach ($_SESSION['cart'] as $qty) {
- $cartCount += $qty;
+
+ if (!empty($_SESSION['cart'])) {
+ foreach ($_SESSION['cart'] as $item) {
+ // Nếu là mảng (cart chuẩn)
+ if (is_array($item)) {
+ $cartCount += $item['quantity'] ?? 0;
+ } 
+ // Nếu chỉ là số
+ else {
+ $cartCount += $item;
+ }
  }
  }
  ?>
@@ -128,7 +147,9 @@
  <?php if (isset($_SESSION['user'])): ?>
 
  <i class="fa-regular fa-circle-user"></i>
- <?= $_SESSION['user']['name'] ?>
+ <a href="/Agile-1-VPP/profile" class="user-profile-link">
+ <?= htmlspecialchars($_SESSION['user']['name']) ?>
+ </a>
 
  <a href="/Agile-1-VPP/login" class="btn btn-danger">
  Đăng xuất

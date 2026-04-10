@@ -9,10 +9,7 @@ class ProductController
 
     public function __construct()
     {
-        // 🔥 load DB từ config
-        $db = require __DIR__ . '/../../config/database.php';
-
-        $this->modelProducts = new Product($db);
+        $this->modelProducts = new Product();
     }
 
     public function index(){
@@ -25,10 +22,73 @@ class ProductController
         $products = $this->modelProducts->getAll($sort);
     }
 
-    $categories = (new \App\Models\Category(require __DIR__.'/../../config/database.php'))->getAll();
+    $categories = (new \App\Models\Category())->getAll();
 
     return view('products.index', compact('products','categories','sort'));
 }
+
+    public function create() {
+        $categories = (new \App\Models\Category())->getAll();
+        return view('products.create', compact('categories'));
+    }
+
+    public function store() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'name' => $_POST['name'] ?? '',
+                'category_id' => $_POST['category_id'] ?? null,
+                'price' => $_POST['price'] ?? 0,
+                'description' => $_POST['description'] ?? ''
+            ];
+
+            if(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK){
+                $uploadDir = __DIR__ . '/../../public/uploads/';
+                if(!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+                $fileName = uniqid() . '_' . basename($_FILES['image']['name']);
+                if(move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)){
+                    $data['image'] = 'uploads/' . $fileName;
+                }
+            }
+
+            $this->modelProducts->insert($data);
+            header("Location: /Agile-1-VPP/products");
+            exit;
+        }
+    }
+
+    public function edit($id) {
+        $product = $this->modelProducts->find($id);
+        if (!$product) {
+            header("Location: /Agile-1-VPP/products");
+            exit;
+        }
+        $categories = (new \App\Models\Category())->getAll();
+        return view('products.edit', compact('product', 'categories'));
+    }
+
+    public function update($id) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $data = [
+                'name' => $_POST['name'] ?? '',
+                'category_id' => $_POST['category_id'] ?? null,
+                'price' => $_POST['price'] ?? 0,
+                'description' => $_POST['description'] ?? ''
+            ];
+
+            if(isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK){
+                $uploadDir = __DIR__ . '/../../public/uploads/';
+                if(!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+                $fileName = uniqid() . '_' . basename($_FILES['image']['name']);
+                if(move_uploaded_file($_FILES['image']['tmp_name'], $uploadDir . $fileName)){
+                    $data['image'] = 'uploads/' . $fileName;
+                }
+            }
+
+            $this->modelProducts->updateProduct($id, $data);
+            header("Location: /Agile-1-VPP/products");
+            exit;
+        }
+    }
     
     public function show($id){
         $product = $this->modelProducts->find($id);
@@ -71,6 +131,28 @@ class ProductController
     }
 
     header("Location: /Agile-1-VPP/product/show/$id");
+    exit;
+}
+public function delete($id){
+    $product = $this->modelProducts->find($id);
+
+    if(!$product){
+        echo "Không tìm thấy sản phẩm";
+        return;
+    }
+
+    // 🔥 xóa ảnh nếu có
+    if(!empty($product['image'])){
+        $filePath = __DIR__ . '/../../public/' . $product['image'];
+        if(file_exists($filePath)){
+            unlink($filePath);
+        }
+    }
+
+    // 🔥 xóa DB
+    $this->modelProducts->delete($id);
+
+    header("Location: /Agile-1-VPP/products");
     exit;
 }
 }
