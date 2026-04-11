@@ -34,6 +34,17 @@ class User {
         return $result;
     }
 
+    public function findByPhone($phone) {
+        $stmt = $this->conn->prepare(
+            "SELECT * FROM users WHERE phone=?"
+        );
+        $stmt->bind_param("s", $phone);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+        return $result;
+    }
+
     public function login($email, $password) {
         $user = $this->findByEmail($email);
 

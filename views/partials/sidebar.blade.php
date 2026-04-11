@@ -1,37 +1,44 @@
 <aside class="sidebar">
     <div class="sidebar-logo">
         <i class="fa-solid fa-pen-nib"></i>
-        <span>Menu Shop </span>
+        <span>Menu Shop</span>
     </div>
 
-        <small class="nav-label">TRANG CHỦ</small>
-        <a href="{{ route('products') }}" class="nav-item">
-            <i class="fa-solid fa-box"></i>
-            <span>Sản phẩm</span>
-        </a>
-        <a href="{{ route('category') }}" class="nav-item">
-            <i class="fa-solid fa-layer-group"></i>
-            <span>Danh mục</span>
-        </a>
+    <small class="nav-label">TRANG CHỦ</small>
+    <a href="{{ route('products') }}" class="nav-item">
+        <i class="fa-solid fa-box"></i>
+        <span>Sản phẩm</span>
+    </a>
+    <a href="{{ route('category') }}" class="nav-item">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Danh mục</span>
+    </a>
 
-        <small class="nav-label">GIAO DỊCH</small>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-cart-shopping"></i>
-            <span>Đơn hàng</span>
-            {{-- <span class="badge-count"></span> Số đơn hàng mới --}}
-        </a>
-       
+    <small class="nav-label">GIAO DỊCH</small>
+    <a href="#" class="nav-item">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <span>Đơn hàng</span>
+    </a>
 
-        <small class="nav-label">HỆ THỐNG</small>
-         <a href="#" class="nav-item">
-            <i class="fa-solid fa-users"></i>
-            <span>Khách hàng</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-gear"></i>
-            <span>Cài đặt</span>
-        </a>
-    </nav>
+    <small class="nav-label">THỐNG KÊ</small>
+    <a href="{{ route('statistics') }}" class="nav-item">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Doanh thu</span>
+    </a>
+    <a href="{{ route('statistics') }}#top-products" class="nav-item">
+        <i class="fa-solid fa-ranking-star"></i>
+        <span>Sản phẩm bán chạy</span>
+    </a>
+
+    <small class="nav-label">HỆ THỐNG</small>
+    <a href="#" class="nav-item">
+        <i class="fa-solid fa-users"></i>
+        <span>Khách hàng</span>
+    </a>
+    <a href="#" class="nav-item">
+        <i class="fa-solid fa-gear"></i>
+        <span>Cài đặt</span>
+    </a>
 </aside>
 
 <style>
@@ -91,14 +98,12 @@
         color: #fff;
     }
 
-    /* Trạng thái trang đang chọn */
     .nav-item.active {
         background: #34495e;
         color: #fff;
         border-left-color: #3498db;
     }
 
-    /* Badge thông báo đơn hàng mới */
     .badge-count {
         position: absolute;
         right: 20px;

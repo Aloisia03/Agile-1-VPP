@@ -1,14 +1,14 @@
 <?php
 namespace App\Controllers;
-use App\Models\User;
 
+use App\Models\User;
 
 require_once __DIR__ . '/../models/User.php';
 
 class AuthController {
 
     public function showRegister() {
-          require '../Agile-1-VPP/views/users/register.php';
+        require '../Agile-1-VPP/views/users/register.php';
     }
 
     public function register() {
@@ -19,15 +19,15 @@ class AuthController {
         $password = $_POST['password'] ?? '';
         $confirm = $_POST['confirm'] ?? '';
 
-        if (strlen($name) < 3) $errors[] = "Tên >= 3 ký tự";
+        if (strlen($name) < 3) $errors[] = "Ten >= 3 ky tu";
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Email sai";
         if (strlen($password) < 6) $errors[] = "Pass >= 6";
-        if ($password !== $confirm) $errors[] = "Không khớp";
+        if ($password !== $confirm) $errors[] = "Mat khau khong khop";
 
         $userModel = new User();
 
         if ($userModel->findByEmail($email)) {
-            $errors[] = "Email đã tồn tại";
+            $errors[] = "Email da ton tai";
         }
 
         if (empty($errors)) {
@@ -37,11 +37,11 @@ class AuthController {
             exit;
         }
 
-          require '../Agile-1-VPP/views/users/register.php';
+        require '../Agile-1-VPP/views/users/register.php';
     }
 
     public function showLogin() {
-          require '../Agile-1-VPP/views/users/login.php';
+        require '../Agile-1-VPP/views/users/login.php';
     }
 
     public function login() {
@@ -54,16 +54,16 @@ class AuthController {
         $user = $userModel->login($email, $password);
 
         if (!$user) {
-            $errors[] = "Sai tài khoản hoặc mật khẩu";
+            $errors[] = "Sai tai khoan hoac mat khau";
         }
 
         if (empty($errors)) {
-            $_SESSION['user'] = $user; // 
+            $_SESSION['user'] = $user;
             header("Location: home");
             exit;
         }
 
-          require '../Agile-1-VPP/views/users/login.php';
+        require '../Agile-1-VPP/views/users/login.php';
     }
 
     public function logout() {
@@ -81,87 +81,75 @@ class AuthController {
         $errors = [];
         $success = false;
 
-        $email = $_POST['email'] ?? '';
+        $phone = trim($_POST['phone'] ?? '');
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = "Email không hợp lệ";
+        if (!preg_match('/^(0|\\+84)\\d{9,10}$/', $phone)) {
+            $errors[] = "So dien thoai khong hop le";
         }
 
         if (empty($errors)) {
             $userModel = new User();
-            $user = $userModel->findByEmail($email);
+            $user = $userModel->findByPhone($phone);
 
-            if ($user) {
-                $resetToken = $userModel->setPasswordResetToken($email);
-                
-                if ($resetToken) {
-                    // Gửi email reset password
-                    $resetLink = "http://localhost/Agile-1-VPP/reset-password/" . $resetToken;
-                    $to = $email;
-                    $subject = "Đặt lại mật khẩu";
-                    $message = "Bạn đã yêu cầu đặt lại mật khẩu. Nhấp vào liên kết dưới đây:\n\n";
-                    $message .= $resetLink . "\n\n";
-                    $message .= "Liên kết này sẽ hết hạn trong 1 giờ.";
-                    
-                    $headers = "From: noreply@agile.local\r\n";
-                    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
-                    
-                    mail($to, $subject, $message, $headers);
-                    $success = true;
-                }
+            if (!$user) {
+                $errors[] = "So dien thoai khong ton tai trong he thong";
             } else {
-                // Không tiết lộ nếu email tồn tại hay không (vì lý do bảo mật)
-                $success = true;
+                $_SESSION['password_reset_user_id'] = (int) $user['id'];
+                $_SESSION['password_reset_phone'] = $user['phone'];
+                header("Location: /Agile-1-VPP/reset-password");
+                exit;
             }
         }
 
         require '../Agile-1-VPP/views/users/forgot-password.php';
     }
 
-    public function showResetPassword($token) {
+    public function showResetPassword() {
         $errors = [];
-        $userModel = new User();
-        $user = $userModel->findByPasswordResetToken($token);
 
-        if (!$user) {
-            $errors[] = "Liên kết không hợp lệ hoặc đã hết hạn";
+        if (empty($_SESSION['password_reset_user_id'])) {
+            $errors[] = "Phien xac minh da het han. Vui long thuc hien lai.";
         }
 
         require '../Agile-1-VPP/views/users/reset-password.php';
     }
 
-    public function resetPassword($token) {
+    public function resetPassword() {
         $errors = [];
-        $success = false;
 
-        $userModel = new User();
-        $user = $userModel->findByPasswordResetToken($token);
+        $userId = $_SESSION['password_reset_user_id'] ?? null;
+        $phone = $_SESSION['password_reset_phone'] ?? null;
 
-        if (!$user) {
-            $errors[] = "Liên kết không hợp lệ hoặc đã hết hạn";
+        if (!$userId || !$phone) {
+            $errors[] = "Phien xac minh da het han. Vui long thuc hien lai.";
         }
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($errors)) {
+            $verifyPhone = trim($_POST['phone'] ?? '');
             $password = $_POST['password'] ?? '';
             $confirm = $_POST['confirm'] ?? '';
 
+            if ($verifyPhone !== $phone) {
+                $errors[] = "So dien thoai xac minh khong dung";
+            }
             if (strlen($password) < 6) {
-                $errors[] = "Mật khẩu phải >= 6 ký tự";
+                $errors[] = "Mat khau phai >= 6 ky tu";
             }
             if ($password !== $confirm) {
-                $errors[] = "Mật khẩu không khớp";
+                $errors[] = "Mat khau khong khop";
             }
 
             if (empty($errors)) {
-                $result = $userModel->updatePassword($user['id'], $password);
-                
+                $userModel = new User();
+                $result = $userModel->updatePassword((int) $userId, $password);
+
                 if ($result) {
-                    $userModel->clearPasswordResetToken($user['id']);
-                    $_SESSION['success_message'] = "Mật khẩu đã được cập nhật thành công. Vui lòng đăng nhập.";
+                    unset($_SESSION['password_reset_user_id'], $_SESSION['password_reset_phone']);
+                    $_SESSION['success_message'] = "Mat khau da duoc cap nhat thanh cong. Vui long dang nhap.";
                     header("Location: /Agile-1-VPP/login");
                     exit;
                 } else {
-                    $errors[] = "Cập nhật mật khẩu thất bại";
+                    $errors[] = "Cap nhat mat khau that bai";
                 }
             }
         }
