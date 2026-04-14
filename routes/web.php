@@ -11,6 +11,8 @@ use App\Controllers\ProfileController;
 use App\Controllers\Client\HomeController as ClientHomeController;
 use App\Controllers\Client\ProductController as ClientProductController;
 use App\Controllers\Client\CartController as ClientCartController;
+use App\Controllers\OrderController;
+
 
 use Bramus\Router\Router;
 
@@ -21,6 +23,7 @@ $router->setBasePath('/Agile-1-VPP');
 
 // HOME
 $router->get('/home', HomeController::class . '@index');
+
 
 
 // AUTH
@@ -34,12 +37,14 @@ $router->post('/login', AuthController::class . '@login');
 $router->get('/forgot-password', AuthController::class . '@showForgotPassword');
 $router->post('/forgot-password', AuthController::class . '@forgotPassword');
 
-$router->get('/reset-password/(\w+)', AuthController::class . '@showResetPassword');
-$router->post('/reset-password/(\w+)', AuthController::class . '@resetPassword');
+$router->get('/reset-password', 'App\Controllers\AuthController@showResetPassword');
+$router->post('/reset-password', 'App\Controllers\AuthController@resetPassword');
 
 // PROFILE
 $router->get('/profile', ProfileController::class . '@show');
-$router->post('/profile', ProfileController::class . '@update');
+$router->get('/profile/update', ProfileController::class . '@edit');     // <-- FIX
+$router->post('/profile/update', ProfileController::class . '@update');
+
 
 $router->get('/logout', AuthController::class . '@logout');
 
@@ -52,6 +57,16 @@ $router->post('/product/store', ProductController::class . '@store');
 $router->get('/product/edit/(\d+)', ProductController::class . '@edit');
 $router->post('/product/update/(\d+)', ProductController::class . '@update');
 $router->get('/product/delete/{id}', ProductController::class . '@delete');
+
+
+$router->get('/orders', OrderController::class . '@index');
+
+    $router->get('/orders/(\d+)', OrderController::class . '@show');
+
+    $router->post('/orders/confirm/(\d+)', OrderController::class . '@confirm');
+
+    $router->post('/orders/cancel/(\d+)', OrderController::class . '@cancel');
+
 
 // ✅ FIX upload
 $router->post('/product/upload-image/(\d+)', ProductController::class . '@uploadImage');

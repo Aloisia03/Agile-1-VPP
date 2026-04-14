@@ -1,28 +1,71 @@
 <?php
+
 namespace App\Controllers\Client;
 
 use App\Models\Product;
+use App\Models\Category;
 
-class ProductController {
-    
-    // Trang danh sách tất cả sản phẩm
-    public function index() {
+class ProductController
+{
+    public function index()
+    {
         $productModel = new Product();
+        $categoryModel = new Category();
+
         $products = $productModel->getAll();
+        $categories = $categoryModel->getAll();
+
+        // ======================
+        // GET PARAMS
+        // ======================
+        $keyword = $_GET['keyword'] ?? null;
+        $categoryId = $_GET['category_id'] ?? null;
+        $sort = $_GET['sort'] ?? null;
+
+        // ======================
+        // SEARCH (TÊN SP)
+        // ======================
+        if (!empty($keyword)) {
+            $keyword = strtolower(trim($keyword));
+
+            $products = array_filter($products, function ($p) use ($keyword) {
+                return isset($p['name']) &&
+                       strpos(strtolower($p['name']), $keyword) !== false;
+            });
+        }
+
+        // ======================
+        // FILTER CATEGORY
+        // ======================
+        if (!empty($categoryId)) {
+            $products = array_filter($products, function ($p) use ($categoryId) {
+                return isset($p['category_id']) &&
+                       $p['category_id'] == $categoryId;
+            });
+        }
+
+        // ======================
+        // SORT PRICE
+        // ======================
+        if ($sort === 'asc') {
+            usort($products, fn($a, $b) => $a['price'] <=> $b['price']);
+        }
+
+        if ($sort === 'desc') {
+            usort($products, fn($a, $b) => $b['price'] <=> $a['price']);
+        }
 
         view('client.products.index', [
-            'products' => $products
+            'products' => $products,
+            'categories' => $categories
         ]);
     }
 
-    // Trang chi tiết 1 sản phẩm (nhận $id từ URL)
-    public function show($id) {
+    public function show($id)
+    {
         $productModel = new Product();
-        
-        // Giả sử Model của bạn có hàm getById() hoặc find()
-        $product = $productModel->find($id); 
+        $product = $productModel->find($id);
 
-        // Nếu người dùng nhập ID linh tinh trên URL, đá về trang chủ
         if (!$product) {
             header("Location: /Agile-1-VPP/client/home");
             exit;

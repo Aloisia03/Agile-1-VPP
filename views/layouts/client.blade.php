@@ -51,21 +51,34 @@
                 </a>
 
                 @if(isset($_SESSION['user']))
-                    <div class="dropdown">
-                        <a class="dropdown-toggle text-dark font-weight-bold text-decoration-none" href="#" id="userDropdown" data-toggle="dropdown">
-                            <i class="fa-regular fa-user-circle mr-1 text-info"></i> {{ $_SESSION['user']['name'] }}
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right shadow border-0 mt-2">
-                            <a class="dropdown-item py-2" href="#"><i class="fa-solid fa-user-gear mr-2 text-secondary"></i>Hồ sơ</a>
-                            <div class="dropdown-divider"></div>
-                            <a href="/Agile-1-VPP/logout" class="dropdown-item text-danger py-2">
-                                <i class="fa-solid fa-right-from-bracket mr-2"></i>Đăng xuất
-                            </a>
-                        </div>
-                    </div>
-                @else
-                    <a href="/Agile-1-VPP/login" class="btn btn-outline-info btn-sm font-weight-bold">Đăng nhập</a>
-                @endif
+    <div class="dropdown">
+        <a class="dropdown-toggle text-dark font-weight-bold text-decoration-none" 
+           href="#" id="userDropdown" data-toggle="dropdown">
+            <i class="fa-regular fa-user-circle mr-1 text-info"></i>
+            {{ $_SESSION['user']['name'] }}
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right shadow border-0 mt-2">
+
+            <a class="dropdown-item py-2" href="/Agile-1-VPP/profile">
+                <i class="fa-solid fa-user-gear mr-2 text-secondary"></i>
+                Hồ sơ
+            </a>
+
+            <div class="dropdown-divider"></div>
+
+            <a href="/Agile-1-VPP/logout" class="dropdown-item text-danger py-2">
+                <i class="fa-solid fa-right-from-bracket mr-2"></i>
+                Đăng xuất
+            </a>
+
+        </div>
+    </div>
+@else
+    <a href="/Agile-1-VPP/login" class="btn btn-outline-info btn-sm font-weight-bold">
+        Đăng nhập
+    </a>
+@endif
             </div>
         </div>
     </div>

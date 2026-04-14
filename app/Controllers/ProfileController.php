@@ -1,76 +1,97 @@
 <?php
 namespace App\Controllers;
-use App\Models\User;
 
-require_once __DIR__ . '/../Models/User.php';
+use App\Models\User;
 
 class ProfileController {
 
     public function show() {
-        // Kiểm tra đăng nhập
         if (!isset($_SESSION['user'])) {
             header("Location: /Agile-1-VPP/login");
             exit;
         }
 
-        $errors = [];
-        $success = false;
         $user = $_SESSION['user'];
+        $errors = [];
+        $success = $_SESSION['success'] ?? false;
+        unset($_SESSION['success']);
+
         require '../Agile-1-VPP/views/users/profile-detail.php';
     }
 
-    public function update() {
-        // Kiểm tra đăng nhập
+    public function edit() {
         if (!isset($_SESSION['user'])) {
             header("Location: /Agile-1-VPP/login");
             exit;
         }
 
-        $errors = [];
+        $userModel = new User();
+        $user = $userModel->findById($_SESSION['user']['id']);
+
+        $errors = $_SESSION['errors'] ?? [];
+        unset($_SESSION['errors']);
+
         $success = false;
-        $user = $_SESSION['user'];
+
+        require '../Agile-1-VPP/views/users/profile-update.php';
+    }
+
+    public function update() {
+
+        if (!isset($_SESSION['user'])) {
+            header("Location: /Agile-1-VPP/login");
+            exit;
+        }
+
+        $userModel = new User();
+        $userId = $_SESSION['user']['id'];
+        $currentUser = $userModel->findById($userId);
+
+        $errors = [];
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $name = $_POST['name'] ?? '';
-            $email = $_POST['email'] ?? '';
-            $phone = $_POST['phone'] ?? '';
-            $address = $_POST['address'] ?? '';
 
-            // Validation
+            $name = trim($_POST['name'] ?? '');
+            $email = trim($_POST['email'] ?? '');
+            $phone = trim($_POST['phone'] ?? '');
+            $address = trim($_POST['address'] ?? '');
+
+            // validate
             if (strlen($name) < 3) {
                 $errors[] = "Tên phải >= 3 ký tự";
             }
+
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors[] = "Email không hợp lệ";
             }
 
-            if (empty($errors)) {
-                $userModel = new User();
-                
-                // Kiểm tra email đã tồn tại (ngoại trừ email hiện tại)
-                if ($email !== $user['email']) {
-                    $existingUser = $userModel->findByEmail($email);
-                    if ($existingUser) {
-                        $errors[] = "Email đã tồn tại";
-                    }
-                }
+            // check email trùng
+            $exist = $userModel->findByEmail($email);
+            if ($exist && $exist['id'] != $userId) {
+                $errors[] = "Email đã tồn tại";
+            }
 
-                if (empty($errors)) {
-                    $result = $userModel->update($user['id'], $name, $email, $phone, $address);
-                    
-                    if ($result) {
-                        // Cập nhật session
-                        $updatedUser = $userModel->findById($user['id']);
-                        $_SESSION['user'] = $updatedUser;
-                        $success = true;
-                        $user = $updatedUser;
-                    } else {
-                        $errors[] = "Cập nhật thất bại";
-                    }
-                }
+            if (empty($errors)) {
+
+                // ✅ FIX QUAN TRỌNG: đúng format update($id, $data)
+                $userModel->update($userId, [
+                    'name' => $name,
+                    'email' => $email,
+                    'phone' => $phone,
+                    'address' => $address
+                ]);
+
+                // update session
+                $_SESSION['user'] = $userModel->findById($userId);
+
+                $_SESSION['success'] = "Cập nhật thành công";
+
+                header("Location: /Agile-1-VPP/profile");
+                exit;
             }
         }
 
-        require '../Agile-1-VPP/views/users/profile-detail.php';
+        $user = $currentUser;
+        require '../Agile-1-VPP/views/users/profile-update.php';
     }
 }

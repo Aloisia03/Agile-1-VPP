@@ -3,73 +3,122 @@
 <?php $this->startSection('title', 'Trang chủ - Mùa tựu trường'); ?>
 
 <?php $this->startSection('content'); ?>
-<div class="container">
- <div class="jumbotron text-white rounded-lg shadow-sm text-center mb-5" style="background: linear-gradient(135deg, #17a2b8 0%, #0056b3 100%); padding: 4rem 2rem;">
- <h1 class="display-4 font-weight-bold mb-3">Mùa tựu trường rộn ràng!</h1>
- <p class="lead">Chào mừng 
+<div class="container py-4">
+
+ <?php /* HERO */ ?>
+ <div class="hero-banner text-white text-center mb-5">
+ <h1 class="display-5 font-weight-bold mb-3">🎒 Mùa tựu trường rộn ràng!</h1>
+
+ <p class="lead">
+ Chào mừng 
  <?php if(isset($_SESSION['user'])): ?>
- <strong><?php echo \htmlentities($_SESSION['user']['name']??'', ENT_QUOTES, 'UTF-8', false); ?></strong> 
+ 
+ <strong><?php echo \htmlentities($_SESSION['user']['name']??'', ENT_QUOTES, 'UTF-8', false); ?></strong>
  <?php else: ?>
- <strong>bạn</strong> 
+ <strong>bạn</strong>
  <?php endif; ?>
- đến với Tre Trẻ VPP.
+ đến với Tre Trẻ VPP
  </p>
- <p class="mb-4">Sắm dụng cụ học tập xịn - Đón điểm 10 lung linh.</p>
- <a href="/Agile-1-VPP/client/products" class="btn btn-light btn-lg font-weight-bold text-info px-5 rounded-pill shadow">
+
+ <p class="mb-4">Sắm đồ xịn – Học hết mình – Điểm 10 cực đỉnh ✨</p>
+
+ <a href="/Agile-1-VPP/client/products" class="btn btn-light btn-lg px-5 rounded-pill font-weight-bold text-info shadow">
  Mua sắm ngay <i class="fa-solid fa-arrow-right ml-2"></i>
  </a>
  </div>
 
- <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
- <h3 class="font-weight-bold m-0 text-dark">Sản phẩm nổi bật</h3>
- <a href="/Agile-1-VPP/client/products" class="text-info font-weight-bold text-decoration-none hover-primary">
- Xem tất cả <i class="fa-solid fa-angles-right"></i>
+ <?php /* TITLE */ ?>
+ <div class="d-flex justify-content-between align-items-center mb-4">
+ <h4 class="font-weight-bold m-0">🔥 Sản phẩm nổi bật</h4>
+ <a href="/Agile-1-VPP/client/products" class="text-info font-weight-bold">
+ Xem tất cả →
  </a>
  </div>
- 
+
+ <?php /* PRODUCT LIST */ ?>
  <div class="row">
- <?php $__empty_1 = true; foreach(array_slice($products, 0, 4) as $product): $__empty_1 = false; ?> 
- <div class="col-md-3 col-sm-6 mb-4">
- <div class="card h-100 shadow-sm border-0 product-card rounded-lg">
- <div class="position-relative overflow-hidden rounded-top" style="height: 220px;">
- <img src="/Agile-1-VPP/public/uploads/<?php echo \htmlentities($product['image']??'', ENT_QUOTES, 'UTF-8', false); ?>" 
- class="card-img-top w-100 h-100" 
- alt="<?php echo \htmlentities($product['name']??'', ENT_QUOTES, 'UTF-8', false); ?>" 
- style="object-fit: cover; transition: transform 0.3s ease;">
+ <?php $__empty_1 = true; foreach(array_slice($products, 0, 4) as $product): $__empty_1 = false; ?>
+ <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+
+ <div class="card product-card h-100 border-0 shadow-sm">
+
+ <?php /* IMAGE */ ?>
+ <div class="product-img">
+ <img src="<?php echo \htmlentities(file_url($product['image'] ?? '')??'', ENT_QUOTES, 'UTF-8', false); ?>"
+ onerror="this.src='https://via.placeholder.com/300x200'"
+ alt="">
  </div>
 
+ <?php /* BODY */ ?>
  <div class="card-body text-center d-flex flex-column">
- <h6 class="card-title text-dark font-weight-bold text-truncate mb-2" title="<?php echo \htmlentities($product['name']??'', ENT_QUOTES, 'UTF-8', false); ?>">
+ <h6 class="font-weight-bold text-truncate mb-2">
  <?php echo \htmlentities($product['name']??'', ENT_QUOTES, 'UTF-8', false); ?>
 
  </h6>
- <p class="card-text text-danger font-weight-bold mb-3" style="font-size: 1.15rem;">
+
+ <div class="text-danger font-weight-bold mb-3" style="font-size: 1.1rem;">
  <?php echo \htmlentities(number_format($product['price'], 0, ',', '.')??'', ENT_QUOTES, 'UTF-8', false); ?> ₫
- </p>
- 
- <a href="/Agile-1-VPP/client/product/<?php echo \htmlentities($product['id']??'', ENT_QUOTES, 'UTF-8', false); ?>" 
- class="btn btn-outline-info btn-sm mt-auto shadow-sm rounded-pill font-weight-bold">
+ </div>
+
+ <a href="/Agile-1-VPP/client/product/<?php echo \htmlentities($product['id']??'', ENT_QUOTES, 'UTF-8', false); ?>"
+ class="btn btn-outline-info btn-sm mt-auto rounded-pill">
  <i class="fa-solid fa-eye"></i> Xem chi tiết
  </a>
  </div>
+
  </div>
+
  </div>
  <?php endforeach; if ($__empty_1): ?>
  <div class="col-12 text-center py-5">
  <i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
- <p class="text-muted lead">Hiện tại chưa có sản phẩm nào.</p>
+ <p class="text-muted">Chưa có sản phẩm</p>
  </div>
  <?php endif; ?>
  </div>
+
 </div>
 <?php $this->stopSection(); ?>
 
+
 <?php $this->startPush('styles'); ?>
 <style>
- .product-card { transition: all 0.3s ease; }
- .product-card:hover { transform: translateY(-8px); box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important; }
- .product-card:hover img { transform: scale(1.08); }
- .hover-primary:hover { color: #0056b3 !important; }
+/* HERO */
+.hero-banner {
+ background: linear-gradient(135deg, #17a2b8, #0056b3);
+ padding: 60px 20px;
+ border-radius: 15px;
+}
+
+/* CARD */
+.product-card {
+ border-radius: 12px;
+ transition: 0.3s;
+}
+
+.product-card:hover {
+ transform: translateY(-6px);
+ box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+}
+
+/* IMAGE FIX */
+.product-img {
+ height: 200px;
+ overflow: hidden;
+ border-top-left-radius: 12px;
+ border-top-right-radius: 12px;
+}
+
+.product-img img {
+ width: 100%;
+ height: 100%;
+ object-fit: cover;
+ transition: 0.4s;
+}
+
+.product-card:hover img {
+ transform: scale(1.1);
+}
 </style>
 <?php $this->stopPush(); ?>
 <?php if (isset($_shouldextend[1])) { echo $this->runChild('layouts.client'); } ?>

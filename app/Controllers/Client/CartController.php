@@ -225,5 +225,20 @@ class CartController {
         header("Location: /Agile-1-VPP/client/cart");
         exit;
     }
+public function update()
+{
+    session_start();
 
+    $id = $_POST['id'];
+    $quantity = (int) $_POST['quantity'];
+
+    if ($quantity < 1) $quantity = 1;
+
+    if (isset($_SESSION['cart'][$id])) {
+        $_SESSION['cart'][$id]['quantity'] = $quantity;
+    }
+
+    header("Location: /Agile-1-VPP/client/cart");
+    exit;
+}
 }

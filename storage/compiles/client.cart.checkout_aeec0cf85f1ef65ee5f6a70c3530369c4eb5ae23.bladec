@@ -3,85 +3,139 @@
 <?php $this->startSection('title', 'Thanh toán đơn hàng'); ?>
 
 <?php $this->startSection('content'); ?>
-<div class="container py-4">
+<div class="container py-5">
+
+ <!-- Breadcrumb -->
  <nav aria-label="breadcrumb">
- <ol class="breadcrumb bg-transparent px-0 pb-2">
- <li class="breadcrumb-item"><a href="/Agile-1-VPP/client/cart" class="text-info">Giỏ hàng</a></li>
- <li class="breadcrumb-item active" aria-current="page">Thanh toán</li>
+ <ol class="breadcrumb bg-transparent px-0 pb-2 mb-4">
+ <li class="breadcrumb-item">
+ <a href="/Agile-1-VPP/client/cart" class="text-info">Giỏ hàng</a>
+ </li>
+ <li class="breadcrumb-item active">Thanh toán</li>
  </ol>
  </nav>
 
- <h3 class="font-weight-bold mb-4 text-info">Thông tin giao hàng</h3>
-
- <form action="/Agile-1-VPP/client/checkout" method="POST">
  <div class="row">
+ 
+ <!-- LEFT: FORM -->
  <div class="col-lg-7 mb-4">
  <div class="card shadow-sm border-0 rounded-lg p-4">
- <h5 class="mb-4 border-bottom pb-2 font-weight-bold">Địa chỉ nhận hàng</h5>
- 
+ <h5 class="font-weight-bold mb-4 border-bottom pb-2">
+ <i class="fa-solid fa-location-dot mr-2 text-info"></i>
+ Thông tin giao hàng
+ </h5>
+
+ <form action="/Agile-1-VPP/client/checkout" method="POST">
+
  <div class="form-group">
- <label class="font-weight-bold">Họ và tên người nhận <span class="text-danger">*</span></label>
- <input type="text" name="customer_name" class="form-control p-4" required 
- value="<?php echo \htmlentities(isset($_SESSION['user']) ? $_SESSION['user']['name'] : ''??'', ENT_QUOTES, 'UTF-8', false); ?>" 
- placeholder="Nhập họ tên đầy đủ">
+ <label class="font-weight-bold">Họ và tên</label>
+ <input type="text" name="customer_name"
+ class="form-control form-control-lg"
+ required
+ value="<?php echo \htmlentities($_SESSION['user']['name'] ?? ''??'', ENT_QUOTES, 'UTF-8', false); ?>"
+ placeholder="Nhập họ tên">
  </div>
 
  <div class="form-group">
- <label class="font-weight-bold">Số điện thoại <span class="text-danger">*</span></label>
- <input type="text" name="customer_phone" class="form-control p-4" required 
- placeholder="Nhập số điện thoại liên hệ">
+ <label class="font-weight-bold">Số điện thoại</label>
+ <input type="text" name="customer_phone"
+ class="form-control form-control-lg"
+ required
+ placeholder="Nhập số điện thoại">
  </div>
 
  <div class="form-group">
- <label class="font-weight-bold">Địa chỉ giao hàng chi tiết <span class="text-danger">*</span></label>
- <textarea name="customer_address" class="form-control" rows="3" required 
- placeholder="Ví dụ: Số nhà 12, Ngõ 34, Phường X, Quận Y, TP Z"></textarea>
+ <label class="font-weight-bold">Địa chỉ</label>
+ <textarea name="customer_address"
+ class="form-control"
+ rows="3"
+ required
+ placeholder="Số nhà, đường, quận, thành phố"></textarea>
  </div>
 
- <div class="form-group">
- <label class="font-weight-bold">Ghi chú (Tùy chọn)</label>
- <textarea name="note" class="form-control" rows="2" placeholder="Giao giờ hành chính, gọi trước khi giao..."></textarea>
+ <div class="form-group mb-0">
+ <label class="font-weight-bold">Ghi chú</label>
+ <textarea name="note"
+ class="form-control"
+ rows="2"
+ placeholder="Giao giờ hành chính..."></textarea>
  </div>
+
  </div>
  </div>
 
+ <!-- RIGHT: ORDER SUMMARY -->
  <div class="col-lg-5">
- <div class="card shadow-sm border-0 rounded-lg p-4 bg-light">
- <h5 class="font-weight-bold mb-3 border-bottom pb-2">Tóm tắt đơn hàng</h5>
- 
+ <div class="card shadow-sm border-0 rounded-lg p-4 bg-light sticky-top" style="top: 90px;">
+ <h5 class="font-weight-bold mb-3 border-bottom pb-2">
+ <i class="fa-solid fa-receipt mr-2 text-info"></i>
+ Đơn hàng
+ </h5>
+
  <?php $totalPrice = 0;  ?>
+
  <?php $__currentLoopData = $cart; $this->addLoop($__currentLoopData);$this->getFirstLoop();
  foreach($__currentLoopData as $item): $loop = $this->incrementLoopIndices();  ?>
- <?php $totalPrice += $item['price'] * $item['quantity'];  ?>
- <div class="d-flex justify-content-between align-items-center mb-3">
+ <?php 
+ $subtotal = $item['price'] * $item['quantity'];
+ $totalPrice += $subtotal;
+ ?>
+
+ <div class="d-flex align-items-center justify-content-between mb-3">
+ 
+ <!-- LEFT -->
  <div class="d-flex align-items-center">
- <img src="/Agile-1-VPP/public/uploads/<?php echo \htmlentities($item['image']??'', ENT_QUOTES, 'UTF-8', false); ?>" class="rounded mr-2" style="width: 50px; height: 50px; object-fit: cover;">
+ <img 
+ src="<?php echo \htmlentities(file_url($item['image'] ?? '')??'', ENT_QUOTES, 'UTF-8', false); ?>"
+ onerror="this.src='https://via.placeholder.com/60'"
+ style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px; margin-right: 10px;">
+ 
  <div>
- <h6 class="mb-0 text-truncate" style="max-width: 150px;"><?php echo \htmlentities($item['name']??'', ENT_QUOTES, 'UTF-8', false); ?></h6>
- <small class="text-muted">SL: <?php echo \htmlentities($item['quantity']??'', ENT_QUOTES, 'UTF-8', false); ?></small>
+ <h6 class="mb-1 text-truncate" style="max-width: 150px;">
+ <?php echo \htmlentities($item['name']??'', ENT_QUOTES, 'UTF-8', false); ?>
+
+ </h6>
+ <small class="text-muted">x<?php echo \htmlentities($item['quantity']??'', ENT_QUOTES, 'UTF-8', false); ?></small>
  </div>
  </div>
- <span class="font-weight-bold"><?php echo \htmlentities(number_format($item['price'] * $item['quantity'], 0, ',', '.')??'', ENT_QUOTES, 'UTF-8', false); ?> ₫</span>
+
+ <!-- RIGHT -->
+ <span class="font-weight-bold text-danger">
+ <?php echo \htmlentities(number_format($subtotal, 0, ',', '.')??'', ENT_QUOTES, 'UTF-8', false); ?> ₫
+ </span>
  </div>
  <?php endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>
 
  <hr>
+
  <div class="d-flex justify-content-between mb-2">
- <span class="text-muted">Phí vận chuyển:</span>
+ <span>Phí vận chuyển</span>
  <span class="text-success font-weight-bold">Miễn phí</span>
  </div>
- <div class="d-flex justify-content-between mb-4 mt-2">
- <h5 class="font-weight-bold">Tổng thanh toán:</h5>
- <h4 class="font-weight-bold text-danger m-0"><?php echo \htmlentities(number_format($totalPrice, 0, ',', '.')??'', ENT_QUOTES, 'UTF-8', false); ?> ₫</h4>
+
+ <div class="d-flex justify-content-between mb-4">
+ <h5 class="font-weight-bold">Tổng</h5>
+ <h4 class="text-danger font-weight-bold m-0">
+ <?php echo \htmlentities(number_format($totalPrice, 0, ',', '.')??'', ENT_QUOTES, 'UTF-8', false); ?> ₫
+ </h4>
  </div>
 
- <button type="submit" class="btn btn-info btn-block py-3 font-weight-bold text-uppercase rounded-pill shadow">
- Hoàn tất đặt hàng
+ <button type="submit"
+ class="btn btn-info btn-block py-3 font-weight-bold rounded-pill shadow">
+ <i class="fa-solid fa-check mr-2"></i>
+ Đặt hàng
  </button>
- </div>
- </div>
- </div>
+
+ <a href="/Agile-1-VPP/client/cart"
+ class="btn btn-link btn-block text-muted mt-2">
+ ← Quay lại giỏ hàng
+ </a>
+
  </form>
+ </div>
+ </div>
+
+ </div>
 </div>
 <?php $this->stopSection(); ?>
 <?php if (isset($_shouldextend[1])) { echo $this->runChild('layouts.client'); } ?>
