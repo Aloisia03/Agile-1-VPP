@@ -15,7 +15,7 @@
         </a>
 
         <small class="nav-label">GIAO DỊCH</small>
-        <a href="#" class="nav-item">
+        <a href="{{ route('orders') }}" class="nav-item">
             <i class="fa-solid fa-cart-shopping"></i>
             <span>Đơn hàng</span>
             {{-- <span class="badge-count"></span> Số đơn hàng mới --}}
