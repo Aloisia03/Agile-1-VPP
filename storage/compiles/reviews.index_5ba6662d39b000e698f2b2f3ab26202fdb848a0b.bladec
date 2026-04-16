@@ -1,0 +1,47 @@
+<?php $_shouldextend[1]=1; ?>
+<?php $this->startSection('content'); ?>
+<div class="container-fluid py-4">
+ <h4 class="font-weight-bold text-dark mb-4">Quản lý Đánh giá & Phản hồi</h4>
+
+ <div class="card border-0 shadow-sm">
+ <div class="table-responsive text-dark">
+ <table class="table table-hover align-middle mb-0">
+ <thead class="bg-light">
+ <tr>
+ <th class="border-0 pl-4">Khách hàng</th>
+ <th class="border-0">Sản phẩm</th>
+ <th class="border-0 text-center">Đánh giá</th>
+ <th class="border-0" style="width: 30%;">Nội dung</th>
+ <th class="border-0 text-center">Thao tác</th>
+ </tr>
+ </thead>
+ <tbody>
+ <?php $__currentLoopData = $reviews; $this->addLoop($__currentLoopData);$this->getFirstLoop();
+ foreach($__currentLoopData as $r): $loop = $this->incrementLoopIndices();  ?>
+ <tr>
+ <td class="pl-4 font-weight-bold"><?php echo \htmlentities($r['user_name']??'', ENT_QUOTES, 'UTF-8', false); ?></td>
+ <td><?php echo \htmlentities($r['product_name']??'', ENT_QUOTES, 'UTF-8', false); ?></td>
+ <td class="text-center">
+ <?php for($i = 1; $i <= 5; $i++): ?>
+ <i class="fa-star <?php echo \htmlentities($i <= $r['rating'] ? 'fa-solid text-warning' : 'fa-regular text-muted'??'', ENT_QUOTES, 'UTF-8', false); ?>"></i>
+ <?php endfor; ?>
+ </td>
+ <td><small><?php echo \htmlentities($r['content']??'', ENT_QUOTES, 'UTF-8', false); ?></small></td>
+ <td class="text-center">
+ <form action="/Agile-1-VPP/reviews/update/<?php echo \htmlentities($r['id']??'', ENT_QUOTES, 'UTF-8', false); ?>" method="POST">
+ <select name="status" onchange="this.form.submit()" class="form-control form-control-sm">
+ <option value="pending" <?php echo \htmlentities($r['status'] == 'pending' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Chờ duyệt</option>
+ <option value="approved" <?php echo \htmlentities($r['status'] == 'approved' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Hiển thị</option>
+ <option value="hidden" <?php echo \htmlentities($r['status'] == 'hidden' ? 'selected' : ''??'', ENT_QUOTES, 'UTF-8', false); ?>>Ẩn</option>
+ </select>
+ </form>
+ </td>
+ </tr>
+ <?php endforeach; $this->popLoop(); $loop = $this->getFirstLoop(); ?>
+ </tbody>
+ </table>
+ </div>
+ </div>
+</div>
+<?php $this->stopSection(); ?>
+<?php if (isset($_shouldextend[1])) { echo $this->runChild('home'); } ?>

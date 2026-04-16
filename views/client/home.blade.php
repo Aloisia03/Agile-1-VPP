@@ -1,122 +1,166 @@
 @extends('layouts.client')
 
-@section('title', 'Trang chủ - Mùa tựu trường')
+@section('title', 'Trang chủ - Tre Trẻ VPP Luxury')
 
 @section('content')
-<div class="container py-4">
-
-    {{-- HERO --}}
-    <div class="hero-banner text-white text-center mb-5">
-        <h1 class="display-5 font-weight-bold mb-3">🎒 Mùa tựu trường rộn ràng!</h1>
-
-        <p class="lead">
-            Chào mừng 
-            @if(isset($_SESSION['user']))
-            
-                <strong>{{ $_SESSION['user']['name'] }}</strong>
-            @else
-                <strong>bạn</strong>
-            @endif
-            đến với Tre Trẻ VPP
-        </p>
-
-        <p class="mb-4">Sắm đồ xịn – Học hết mình – Điểm 10 cực đỉnh ✨</p>
-
-        <a href="/Agile-1-VPP/client/products" class="btn btn-light btn-lg px-5 rounded-pill font-weight-bold text-info shadow">
-            Mua sắm ngay <i class="fa-solid fa-arrow-right ml-2"></i>
-        </a>
+<div class="home-page-luxury bg-white">
+    
+    {{-- 1. HERO BANNER - Phong cách Pandora (Ảnh tràn viền, tối giản) --}}
+    {{-- Long thay link ảnh banner của bạn vào chỗ url() nhé --}}
+    <div class="hero-banner-premium" style="background-image: url('/Agile-1-VPP/public/client/images/banner-back2school.jpg');">
+        <div class="container h-100">
+            <div class="row h-100 align-items-center justify-content-center justify-content-md-start">
+                <div class="col-md-6 text-center text-md-left text-dark px-4">
+                    {{-- Chữ viết tay nghệ thuật (nếu font hỗ trợ) --}}
+                    <span class="hero-subtitle mb-2 d-block">Mùa tựu trường rộn ràng</span>
+                    <h1 class="hero-title mb-3">BST VĂN PHÒNG PHẨM <br> CAO CẤP</h1>
+                    <p class="hero-text mb-5">Sắm đồ xịn – Học hết mình – Điểm 10 cực đỉnh ✨</p>
+                    <a href="/Agile-1-VPP/client/products" class="btn btn-dark btn-hero-premium text-uppercase">
+                        Khám phá ngay <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    {{-- TITLE --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="font-weight-bold m-0">🔥 Sản phẩm nổi bật</h4>
-        <a href="/Agile-1-VPP/client/products" class="text-info font-weight-bold">
-            Xem tất cả →
-        </a>
-    </div>
-
-    {{-- PRODUCT LIST --}}
-    <div class="row">
-        @forelse(array_slice($products, 0, 4) as $product)
-            <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-
-                <div class="card product-card h-100 border-0 shadow-sm">
-
-                    {{-- IMAGE --}}
-                    <div class="product-img">
-                        <img src="{{ file_url($product['image'] ?? '') }}"
-                             onerror="this.src='https://via.placeholder.com/300x200'"
-                             alt="">
+    {{-- 2. CATEGORY ICON SECTION - Mới, giúp khách truy cập nhanh --}}
+    <div class="container py-5 my-4">
+        <div class="text-center mb-5">
+            <h5 class="text-uppercase font-weight-bold mb-0" style="letter-spacing: 3px;">Danh mục nổi bật</h5>
+            <div class="mx-auto bg-dark mt-2" style="width: 40px; height: 1.5px;"></div>
+        </div>
+        <div class="row text-center justify-content-center">
+            {{-- Nhóm này làm tĩnh hoặc Long viết thêm loop lấy Category --}}
+            <div class="col-6 col-md-2 mb-4 category-item">
+                <a href="#" class="text-decoration-none text-dark">
+                    <div class="avatar-lg bg-light rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3 shadow-sm">
+                        <i class="fa-solid fa-pen-fancy fa-2x text-info"></i>
                     </div>
+                    <span class="small font-weight-bold text-uppercase">Bút ký</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-2 mb-4 category-item">
+                <a href="#" class="text-decoration-none text-dark">
+                    <div class="avatar-lg bg-light rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3 shadow-sm">
+                        <i class="fa-solid fa-book-open fa-2x text-info"></i>
+                    </div>
+                    <span class="small font-weight-bold text-uppercase">Sổ tay</span>
+                </a>
+            </div>
+            {{-- Thêm các category khác vào đây --}}
+        </div>
+    </div>
 
-                    {{-- BODY --}}
-                    <div class="card-body text-center d-flex flex-column">
-                        <h6 class="font-weight-bold text-truncate mb-2">
-                            {{ $product['name'] }}
-                        </h6>
+    {{-- 3. PRODUCT LIST SECTION - Thiết kế lại tối giản --}}
+    <div class="container py-5 border-top">
+        <div class="d-flex justify-content-between align-items-center mb-5 pb-2 border-bottom">
+            <h4 class="text-uppercase font-weight-bold m-0" style="letter-spacing: 2px;">Sản phẩm nổi bật</h4>
+            <a href="/Agile-1-VPP/client/products" class="text-info font-weight-bold text-uppercase small" style="letter-spacing: 1px;">
+                Xem tất cả →
+            </a>
+        </div>
 
-                        <div class="text-danger font-weight-bold mb-3" style="font-size: 1.1rem;">
-                            {{ number_format($product['price'], 0, ',', '.') }} ₫
+        <div class="row">
+            {{-- Lấy 4 sản phẩm đầu --}}
+            @forelse(array_slice($products, 0, 4) as $product)
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card product-card-luxury h-100 border-0 shadow-sm overflow-hidden bg-white">
+                        
+                        {{-- IMAGE --}}
+                        <div class="product-img-box p-3">
+                            <img src="{{ file_url($product['image'] ?? '') }}"
+                                 onerror="this.src='https://via.placeholder.com/300x300'"
+                                 alt="{{ $product['name'] }}" class="img-fluid">
+                            {{-- Hiệu ứng hover --}}
+                            <div class="img-overlay bg-info text-white text-uppercase small">Xem ngay</div>
                         </div>
 
-                        <a href="/Agile-1-VPP/client/product/{{ $product['id'] }}"
-                           class="btn btn-outline-info btn-sm mt-auto rounded-pill">
-                           <i class="fa-solid fa-eye"></i> Xem chi tiết
-                        </a>
+                        {{-- BODY --}}
+                        <div class="card-body text-center p-3 d-flex flex-column border-top">
+                            <h6 class="font-weight-normal text-uppercase mb-2 text-dark" style="font-size: 0.75rem; letter-spacing: 1px; height: 35px; overflow: hidden;">
+                                {{ $product['name'] }}
+                            </h6>
+
+                            <div class="text-danger font-weight-bold mb-3 price-luxury">
+                                {{ number_format($product['price'], 0, ',', '.') }} ₫
+                            </div>
+
+                            <a href="/Agile-1-VPP/client/product/{{ $product['id'] }}"
+                               class="btn btn-outline-dark btn-sm mt-auto rounded-pill px-4 text-uppercase font-weight-bold" style="font-size: 0.7rem; letter-spacing: 1px;">
+                                Chi tiết
+                            </a>
+                        </div>
                     </div>
-
                 </div>
-
-            </div>
-        @empty
-            <div class="col-12 text-center py-5">
-                <i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
-                <p class="text-muted">Chưa có sản phẩm</p>
-            </div>
-        @endforelse
+            @empty
+                <div class="col-12 text-center py-5 bg-light rounded-lg mt-4">
+                    <i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
+                    <p class="text-muted text-uppercase small" style="letter-spacing: 1px;">Chưa có sản phẩm nổi bật</p>
+                </div>
+            @endforelse
+        </div>
     </div>
-
 </div>
 @endsection
 
 
 @push('styles')
 <style>
-/* HERO */
-.hero-banner {
-    background: linear-gradient(135deg, #17a2b8, #0056b3);
-    padding: 60px 20px;
-    border-radius: 15px;
-}
+    /* TYPOGRAPHY - Dùng font chữ mảnh, sang trọng */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;700&display=swap');
+    
+    .home-page-luxury { font-family: 'Montserrat', sans-serif; color: #333; }
 
-/* CARD */
-.product-card {
-    border-radius: 12px;
-    transition: 0.3s;
-}
+    /* 1. HERO BANNER PREMIUM */
+    .hero-banner-premium {
+        height: 500px; /* Chiều cao cố định */
+        background-color: #f8f9fa;
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        position: relative;
 
-.product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
-}
+        height: 600px; /* Long tăng chiều cao lên (ví dụ 600px hoặc hơn) để phù hợp với tỉ lệ của ảnh */
+        background-color: #f8f9fa; /* Màu nền trắng xám */
+        background-position: center; /* Đưa ảnh vào giữa */
+        
+        /* 🔥 ĐÂY LÀ DÒNG QUAN TRỌNG NHẤT */
+        background-size: contain; /* Sửa 'cover' thành 'contain' để hiện TOÀN BỘ ảnh */
+        
+        background-repeat: no-repeat; /* Không lặp lại ảnh */
+        position: relative;
+    }
+    
+    .hero-subtitle { font-size: 1.1rem; color: #888; font-weight: 300; font-style: italic; }
+    .hero-title { font-size: 2.8rem; font-weight: 700; letter-spacing: 2px; color: #000; line-height: 1.2; }
+    .hero-text { font-size: 1rem; color: #555; font-weight: 300; }
+    
+    .btn-hero-premium {
+        background: #000; border: 1px solid #000; color: #fff;
+        border-radius: 0; padding: 15px 40px; font-weight: bold;
+        letter-spacing: 2px; font-size: 0.9rem; transition: 0.3s;
+    }
+    .btn-hero-premium:hover { background: #333; color: #fff; transform: translateY(-2px); }
 
-/* IMAGE FIX */
-.product-img {
-    height: 200px;
-    overflow: hidden;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-}
+    /* 2. CATEGORY ITEM */
+    .avatar-lg { width: 80px; height: 80px; transition: 0.3s ease; }
+    .category-item:hover .avatar-lg { transform: scale(1.1); background-color: #e1f5fe !important; }
 
-.product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: 0.4s;
-}
+    /* 3. PRODUCT CARD LUXURY */
+    .product-card-luxury { border-radius: 0 !important; transition: all 0.4s ease; border: 1px solid #eee !important; }
+    .product-card-luxury:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important; border-color: #17a2b8 !important; }
 
-.product-card:hover img {
-    transform: scale(1.1);
-}
+    .product-img-box { height: 230px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .product-img-box img { max-height: 85%; transition: transform 0.6s ease; }
+    .product-card-luxury:hover .product-img-box img { transform: scale(1.08); }
+
+    .img-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(23, 162, 184, 0.9); display: flex; align-items: center;
+        justify-content: center; opacity: 0; transition: 0.4s; font-weight: bold; letter-spacing: 1px;
+    }
+    .product-card-luxury:hover .img-overlay { opacity: 1; }
+
+    .price-luxury { font-size: 1rem; color: #444; }
 </style>
 @endpush

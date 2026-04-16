@@ -71,8 +71,50 @@ class ProductController
             exit;
         }
 
-        view('client.products.detail', [
-            'product' => $product
+        // 1. Lấy sản phẩm cùng loại qua hàm Model (Hết đỏ)
+        $relatedProducts = $productModel->getRelatedProducts($product['category_id'], $id);
+
+        // 2. Lấy gợi ý qua hàm Model (Hết đỏ)
+        $suggestedProducts = $productModel->getSuggestedProducts($id);
+
+        // 3. Lấy đánh giá
+        $reviewModel = new \App\Models\Review();
+        $reviews = $reviewModel->getApprovedReviewsByProductId($id);
+
+        return view('client.products.detail', [
+            'product' => $product,
+            'reviews' => $reviews,
+            'relatedProducts' => $relatedProducts,
+            'suggestedProducts' => $suggestedProducts
         ]);
+    }
+
+public function postReview()
+    {
+        // Kiểm tra đăng nhập
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (!isset($_SESSION['user'])) {
+            header("Location: /Agile-1-VPP/login");
+            exit;
+        }
+
+        $reviewModel = new \App\Models\Review();
+        
+        // Chuẩn bị dữ liệu
+        $data = [
+            'user_id'    => $_SESSION['user']['id'],
+            'product_id' => $_POST['product_id'],
+            'rating'     => $_POST['rating'],
+            'content'    => $_POST['content'],
+            // SỬA TẠI ĐÂY: Đổi 'pending' thành 'approved' để hiện luôn
+            'status'     => 'approved' 
+        ];
+
+        // Gọi hàm từ Model (Không dùng ->connection ở đây nữa)
+        $reviewModel->createReview($data);
+
+        // Quay lại trang sản phẩm vừa đánh giá
+        header("Location: " . $_SERVER['HTTP_REFERER']);
+        exit;
     }
 }

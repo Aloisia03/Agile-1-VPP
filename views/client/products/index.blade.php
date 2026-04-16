@@ -1,197 +1,124 @@
 @extends('layouts.client')
 
-@section('title', 'Tất cả sản phẩm')
+@section('title', 'Sản phẩm - Tre Trẻ VPP')
 
 @section('content')
-<div class="container py-4">
-
-    <!-- BREADCRUMB -->
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb bg-transparent px-0 pb-2 border-bottom">
-            <li class="breadcrumb-item">
-                <a href="/Agile-1-VPP/client/home" class="text-info">Trang chủ</a>
-            </li>
-            <li class="breadcrumb-item active">Sản phẩm</li>
-        </ol>
-    </nav>
-
-    <!-- FILTER + SEARCH -->
-    <form method="GET" class="mb-4">
-
-        <div class="row align-items-end">
-
-            <!-- SEARCH -->
-            <div class="col-md-4 mb-2">
-                <label class="font-weight-bold">Tìm sản phẩm</label>
-                <input type="text"
-                       name="keyword"
-                       class="form-control"
-                       placeholder="Nhập tên sản phẩm..."
-                       value="<?= $_GET['keyword'] ?? '' ?>">
-            </div>
-
-            <!-- CATEGORY -->
-            <div class="col-md-3 mb-2">
-                <label class="font-weight-bold">Danh mục</label>
-                <select name="category_id" class="form-control">
-
-                    <option value="">Tất cả danh mục</option>
-
-                    @foreach($categories as $cate)
-                        <option value="{{ $cate['id'] }}"
-                            {{ (isset($_GET['category_id']) && $_GET['category_id'] == $cate['id']) ? 'selected' : '' }}>
-                            {{ $cate['name'] }}
-                        </option>
-                    @endforeach
-
-                </select>
-            </div>
-
-            <!-- SORT -->
-            <div class="col-md-3 mb-2">
-                <label class="font-weight-bold">Sắp xếp giá</label>
-                <select name="sort" class="form-control">
-
-                    <option value="">Mặc định</option>
-
-                    <option value="asc"
-                        {{ (isset($_GET['sort']) && $_GET['sort']=='asc') ? 'selected' : '' }}>
-                        Tăng dần
-                    </option>
-
-                    <option value="desc"
-                        {{ (isset($_GET['sort']) && $_GET['sort']=='desc') ? 'selected' : '' }}>
-                        Giảm dần
-                    </option>
-
-                </select>
-            </div>
-
-            <!-- BUTTON -->
-            <div class="col-md-2 mb-2">
-                <button class="btn btn-info btn-block font-weight-bold">
-                    Lọc
-                </button>
-            </div>
-
+<div class="product-index-page bg-white py-5">
+    <div class="container">
+        {{-- TIÊU ĐỀ TRANG --}}
+        <div class="text-center mb-5">
+            <h1 class="text-uppercase font-weight-bold" style="letter-spacing: 4px; font-size: 2rem;">Bộ Sưu Tập</h1>
+            <div class="mx-auto bg-dark mt-2" style="width: 50px; height: 2px;"></div>
         </div>
 
-    </form>
+        <div class="row">
+            {{-- BÊN TRÁI: BỘ LỌC (FILTER) --}}
+            <div class="col-lg-3 pr-lg-5 mb-5">
+                <div class="filter-sidebar">
+                    <form action="/Agile-1-VPP/client/products" method="GET">
+                        {{-- Tìm kiếm --}}
+                        <div class="filter-group mb-4">
+                            <h6 class="text-uppercase font-weight-bold small mb-3" style="letter-spacing: 1px;">Tìm kiếm</h6>
+                            <div class="input-group border-bottom shadow-none">
+                                <input type="text" name="keyword" class="form-control border-0 bg-transparent pl-0 shadow-none" 
+                                       placeholder="Bạn tìm gì..." value="{{ $_GET['keyword'] ?? '' }}">
+                                <div class="input-group-append">
+                                    <button class="btn border-0 bg-transparent" type="submit"><i class="fa-solid fa-magnifying-glass small"></i></button>
+                                </div>
+                            </div>
+                        </div>
 
-    <!-- ACTIVE FILTER DISPLAY -->
-    @if(!empty($_GET['keyword']) || !empty($_GET['category_id']) || !empty($_GET['sort']))
-        <div class="mb-3">
-            <span class="badge badge-info p-2">
-                Đang áp dụng bộ lọc
-            </span>
-        </div>
-    @endif
+                        {{-- Danh mục --}}
+                        <div class="filter-group mb-4 mt-5">
+                            <h6 class="text-uppercase font-weight-bold small mb-3" style="letter-spacing: 1px;">Danh mục</h6>
+                            <ul class="list-unstyled">
+                                <li>
+                                    <a href="/Agile-1-VPP/client/products" class="filter-link {{ empty($_GET['category_id']) ? 'active' : '' }}">Tất cả sản phẩm</a>
+                                </li>
+                                @foreach($categories as $cat)
+                                    <li>
+                                        <a href="/Agile-1-VPP/client/products?category_id={{ $cat['id'] }}" 
+                                           class="filter-link {{ ($_GET['category_id'] ?? '') == $cat['id'] ? 'active' : '' }}">
+                                            {{ $cat['name'] }}
+                                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
 
-    <!-- PRODUCT LIST -->
-    <div class="row">
-
-        @forelse($products as $product)
-
-        <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-
-            <div class="card product-card border-0 shadow-sm h-100">
-
-                <!-- IMAGE -->
-                <div class="product-img">
-                    <img
-                        src="{{ file_url($product['image'] ?? '') }}"
-                        onerror="this.src='https://via.placeholder.com/300x250?text=No+Image'"
-                        alt="{{ $product['name'] }}">
+                        {{-- Sắp xếp --}}
+                        <div class="filter-group mb-4 mt-5">
+                            <h6 class="text-uppercase font-weight-bold small mb-3" style="letter-spacing: 1px;">Sắp xếp theo giá</h6>
+                            <select name="sort" class="form-control border-0 border-bottom bg-transparent shadow-none pl-0 rounded-0" onchange="this.form.submit()">
+                                <option value="">Mặc định</option>
+                                <option value="asc" {{ ($_GET['sort'] ?? '') == 'asc' ? 'selected' : '' }}>Giá: Thấp đến Cao</option>
+                                <option value="desc" {{ ($_GET['sort'] ?? '') == 'desc' ? 'selected' : '' }}>Giá: Cao đến Thấp</option>
+                            </select>
+                        </div>
+                    </form>
                 </div>
-
-                <!-- BODY -->
-                <div class="card-body text-center d-flex flex-column">
-
-                    <h6 class="product-name">
-                        {{ $product['name'] }}
-                    </h6>
-
-                    <div class="product-price">
-                        {{ number_format($product['price'], 0, ',', '.') }} ₫
-                    </div>
-
-                    <div class="mt-auto">
-                        <a href="/Agile-1-VPP/client/product/{{ $product['id'] }}"
-                           class="btn btn-outline-info btn-sm w-100 rounded-pill">
-                            <i class="fa-solid fa-eye"></i> Xem chi tiết
-                        </a>
-                    </div>
-
-                </div>
-
             </div>
 
+            {{-- BÊN PHẢI: DANH SÁCH SẢN PHẨM --}}
+            <div class="col-lg-9">
+                <div class="row no-gutters border-top border-left">
+                    @forelse($products as $p)
+                        <div class="col-6 col-md-4 border-right border-bottom p-0">
+                            <div class="product-card-luxury">
+                                <a href="/Agile-1-VPP/client/product/{{ $p['id'] }}" class="text-decoration-none">
+                                    <div class="product-img-box">
+                                        <img src="{{ file_url($p['image'] ?? '') }}" 
+                                             onerror="this.src='https://via.placeholder.com/300x300'" 
+                                             alt="{{ $p['name'] }}">
+                                        {{-- Nút xem nhanh khi hover --}}
+                                        <div class="quick-view-btn text-uppercase">Xem chi tiết</div>
+                                    </div>
+                                    <div class="product-info-box p-4 text-center">
+                                        <h6 class="product-name text-uppercase">{{ $p['name'] }}</h6>
+                                        <div class="product-price">{{ number_format($p['price'], 0, ',', '.') }} ₫</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="col-12 py-5 text-center">
+                            <p class="text-muted italic">Không tìm thấy sản phẩm nào phù hợp.</p>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
         </div>
-
-        @empty
-
-        <div class="col-12 text-center py-5 bg-white shadow-sm rounded">
-            <i class="fa-solid fa-box-open fa-3x text-muted mb-3"></i>
-            <p class="text-muted lead">Không tìm thấy sản phẩm phù hợp</p>
-        </div>
-
-        @endforelse
-
     </div>
-
 </div>
-@endsection
 
-@push('styles')
 <style>
+    /* TYPOGRAPHY & LAYOUT */
+    .product-index-page { font-family: 'Montserrat', sans-serif; color: #333; }
+    
+    /* FILTER SIDEBAR */
+    .filter-link { color: #888; text-decoration: none; font-size: 0.85rem; padding: 8px 0; display: block; transition: 0.3s; }
+    .filter-link:hover, .filter-link.active { color: #000; font-weight: bold; padding-left: 5px; }
 
-.product-card {
-    border-radius: 14px;
-    transition: 0.3s;
-}
+    /* PRODUCT CARD LUXURY */
+    .product-card-luxury { transition: all 0.4s ease; background: #white; position: relative; overflow: hidden; }
+    .product-img-box { height: 280px; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
+    .product-img-box img { max-height: 80%; transition: transform 0.6s ease; }
+    
+    .product-name { font-size: 0.75rem; font-weight: 500; letter-spacing: 1px; color: #222; margin-bottom: 10px; height: 35px; overflow: hidden; }
+    .product-price { font-size: 0.9rem; font-weight: bold; color: #444; }
 
-.product-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-}
+    /* HOVER EFFECTS */
+    .product-card-luxury:hover { background: #fdfdfd; }
+    .product-card-luxury:hover img { transform: scale(1.1); }
+    
+    .quick-view-btn {
+        position: absolute; bottom: -50px; left: 0; width: 100%; background: rgba(0,0,0,0.8);
+        color: #white; font-size: 0.7rem; padding: 12px 0; text-align: center;
+        transition: bottom 0.3s ease; letter-spacing: 2px;
+    }
+    .product-card-luxury:hover .quick-view-btn { bottom: 0; }
 
-.product-img {
-    height: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-}
-
-.product-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    transition: 0.3s;
-}
-
-.product-card:hover img {
-    transform: scale(1.05);
-}
-
-.product-name {
-    font-weight: 600;
-    color: #2c3e50;
-    height: 40px;
-    overflow: hidden;
-}
-
-.product-price {
-    color: #e74c3c;
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-}
-
-.btn-outline-info:hover {
-    background: #17a2b8;
-    color: #fff;
-}
-
+    /* BORDER FIX */
+    .no-gutters > [class*="col-"] { padding: 0; }
 </style>
-@endpush
+@endsection

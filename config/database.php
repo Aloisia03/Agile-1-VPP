@@ -3,7 +3,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-$dbname = "duanagile";
+$dbname = "vpp_agile";
 
 $conn = new mysqli($host, $user, $pass, $dbname);
 

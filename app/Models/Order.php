@@ -127,4 +127,33 @@ public function updateStatusAdmin($id, $status)
 
     return $stmt->execute();
 }
+
+// đây là tồn kho
+
+public function reduceStock($orderId) {
+    // 1. Lấy danh sách sản phẩm và số lượng từ đơn hàng
+    $sql = "SELECT product_id, quantity FROM order_items WHERE order_id = ?";
+    $stmt = $this->connection->prepare($sql);
+    $stmt->bind_param("i", $orderId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // 2. Chuẩn bị sẵn câu lệnh trừ kho (Tối ưu hiệu suất)
+    $updateSql = "UPDATE products SET stock = stock - ? WHERE id = ?";
+    $updateStmt = $this->connection->prepare($updateSql);
+
+    // 3. Duyệt qua từng sản phẩm và thực hiện trừ kho
+    while ($item = $result->fetch_assoc()) {
+        $qty = $item['quantity'];
+        $pId = $item['product_id'];
+        
+        // Gán tham số và chạy lệnh trừ
+        $updateStmt->bind_param("ii", $qty, $pId);
+        $updateStmt->execute();
+    }
+
+    // 4. Giải phóng bộ nhớ
+    $stmt->close();
+    $updateStmt->close();
+}
 }

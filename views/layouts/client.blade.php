@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tre Trẻ VPP - @yield('title')</title>
+    <title>Góc học tập VPP - @yield('title')</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -28,7 +28,7 @@
 <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
     <div class="container">
         <a class="navbar-brand font-weight-bold text-info" href="/Agile-1-VPP/client/home">
-            <i class="fa-solid fa-leaf mr-2"></i>TRE TRẺ VPP
+            <i class="fa-solid fa-leaf mr-2"></i>Góc học tập VPP
         </a>
         <button class="navbar-toggler text-dark" type="button" data-toggle="collapse" data-target="#navbarNav">
             <i class="fa-solid fa-bars"></i>

@@ -173,4 +173,34 @@ class Product extends Model
 
         return $stmt->executeStatement();
     }
+
+    // Trong app/Models/Product.php
+
+// Trong app/Models/Product.php
+
+public function getRelatedProducts($categoryId, $currentProductId, $limit = 4)
+{
+    // Ép kiểu limit về số nguyên cho chắc chắn
+    $limit = (int)$limit;
+    
+    // Nối trực tiếp $limit vào chuỗi SQL để tránh lỗi cú pháp LIMIT của MySQL
+    $sql = "SELECT * FROM products WHERE category_id = :cid AND id != :id LIMIT $limit";
+    
+    return $this->connection->executeQuery($sql, [
+        'cid' => $categoryId,
+        'id'  => $currentProductId
+    ])->fetchAllAssociative();
+}
+
+public function getSuggestedProducts($currentProductId, $limit = 4)
+{
+    $limit = (int)$limit;
+    
+    // Tương tự, nối trực tiếp $limit vào đây
+    $sql = "SELECT * FROM products WHERE id != :id ORDER BY RAND() LIMIT $limit";
+    
+    return $this->connection->executeQuery($sql, [
+        'id' => $currentProductId
+    ])->fetchAllAssociative();
+}
 }
